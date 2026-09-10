@@ -43,9 +43,11 @@ const shelves: Array<{ id: Shelf; parent: "A" | "B" | "C"; status: "available" |
   { id: "C1.2", parent: "C", status: "soon", note: { en: "Advanced healthcare communication — coming soon.", de: "Fortgeschrittene Kommunikation im Gesundheitswesen — bald verfügbar.", ar: "التواصل المتقدم في الرعاية الصحية — قريبًا." } }
 ];
 
-const heroCharacter = "/manus-storage/Screenshot2026-08-04175849_1fa538e0.png";
-const bookFallback = "/manus-storage/Screenshot2026-08-04080605_4399ae3b.png";
-const lessonArt = "/manus-storage/Screenshot2026-08-05174158_b4dd9a0c.png";
+// These are public, stable image URLs so the storefront does not depend on the
+// private Manus workspace storage paths that are unavailable on Render.
+const heroCharacter = "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=85";
+const bookFallback = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=85";
+const lessonArt = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=85";
 const a11Book = { id: "a1-1-instagram-book", title: "German for Nurse A1.1", descriptions: { en: "A practical first step for nurses learning essential German communication in healthcare.", de: "Ein praktischer Einstieg für Pflegekräfte in die wichtige Kommunikation im Gesundheitswesen.", ar: "خطوتك العملية الأولى لتعلم التواصل الأساسي بالألمانية في مجال الرعاية الصحية." }, images: [{ url: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663893490517/QFCSGvpeAiQgscAr.jpg", altText: "German for Nurse A1.1 cover" }] };
 const lessonFeedbackKeys = [
   ["a1-1-lesson-1", "Lesson 1 — Sich vorstellen"], ["a1-1-lesson-2", "Lesson 2 — Beruf & Persönliches"], ["a1-1-lesson-3", "Lesson 3 — Familie & Sprachen"], ["a1-1-lesson-4", "Lesson 4 — Möbel & Preise"], ["a1-1-lesson-5", "Lesson 5 — Ein / Kein"], ["a1-1-lesson-6", "Lesson 6 — Telefon & Akkusativ"], ["a1-1-lesson-7", "Lesson 7 — Hobbys & können"], ["a1-1-lesson-8", "Lesson 8 — Termine & Uhrzeit"], ["a1-1-lesson-9", "Lesson 9 — Trennbare Verben"], ["a1-1-lesson-10", "Lesson 10 — Perfekt mit haben"], ["a1-1-lesson-11", "Lesson 11 — Perfekt mit sein"]
