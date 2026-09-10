@@ -5,6 +5,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, BrainCircuit, Check, Che
 import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Link } from "wouter";
+import { toast } from "sonner";
 
 type Locale = "ar" | "en" | "de";
 type Level = "A1/A2" | "B1/B2" | "C1/C2";
