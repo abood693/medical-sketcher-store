@@ -20,6 +20,10 @@ import { storageGetSignedUrl, storagePut } from "../storage";
 
 export const digitalProductsRouter = router({
   list: publicProcedure.query(() => listPublishedProducts()),
+  demoCheckout: publicProcedure.mutation(async () => {
+    const paypal = await createPaypalOrder({ orderReference: "german-for-nurse-a1-1", amountCents: 500, currency: "JOD" });
+    return { approvalUrl: paypal.links?.find(link => link.rel === "approve")?.href ?? null };
+  }),
   adminList: adminProcedure.query(() => listAllProducts()),
   adminCreate: adminProcedure
     .input(
