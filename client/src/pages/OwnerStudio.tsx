@@ -4,7 +4,6 @@ import FeedbackModeration from "@/components/FeedbackModeration";
 import ProductManager from "@/components/ProductManager";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
 import {
   ArrowLeft,
@@ -54,6 +53,10 @@ export default function OwnerStudio() {
     "Option one\nOption two\nOption three\nOption four"
   );
   const [correctIndex, setCorrectIndex] = useState("0");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
   const [shelfDrafts, setShelfDrafts] = useState<
     Record<string, { title: string; status: ShelfStatus; note: string }>
   >({});
@@ -136,19 +139,14 @@ export default function OwnerStudio() {
   if (!isAuthenticated)
     return (
       <div className="grid min-h-screen place-items-center bg-[#f4f1e9] px-6">
-        <div className="max-w-md rounded-[2rem] bg-white p-10 text-center shadow-xl">
+        <form onSubmit={async event => { event.preventDefault(); setLoggingIn(true); setLoginError(""); try { const response = await fetch("/api/local-admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) }); if (!response.ok) { const data = await response.json().catch(() => ({})); throw new Error(data.error || "Sign in failed"); } window.location.reload(); } catch (error) { setLoginError(error instanceof Error ? error.message : "Sign in failed"); } finally { setLoggingIn(false); } }} className="max-w-md rounded-[2rem] bg-white p-10 text-center shadow-xl">
           <ShieldCheck className="mx-auto mb-5 size-12 text-[#556b2f]" />
           <h1 className="font-display text-3xl font-bold">Owner access</h1>
-          <p className="mt-3 text-sm text-[#667064]">
-            Sign in with the owner account to administer the platform.
-          </p>
-          <Button
-            className="mt-6 rounded-full bg-[#283b25] px-7"
-            onClick={startLogin}
-          >
-            Sign in
-          </Button>
-        </div>
+          <p className="mt-3 text-sm text-[#667064]">Sign in with the owner account to administer the platform.</p>
+          <div className="mt-6 grid gap-3 text-left"><Input aria-label="Username" value={username} onChange={event => setUsername(event.target.value)} placeholder="Username" autoComplete="username" /><Input aria-label="Password" value={password} onChange={event => setPassword(event.target.value)} placeholder="Password" type="password" autoComplete="current-password" /></div>
+          {loginError && <p className="mt-3 text-sm text-[#8d4133]">{loginError}</p>}
+          <Button type="submit" disabled={loggingIn} className="mt-6 rounded-full bg-[#283b25] px-7">{loggingIn ? "Signing in…" : "Sign in"}</Button>
+        </form>
       </div>
     );
   if (!canAdmin)
