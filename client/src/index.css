@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --font-sans: "DM Sans", "Noto Kufi Arabic", sans-serif;
+  --font-display: "Fraunces", "Noto Kufi Arabic", serif;
+  --color-background: #f8f5eb;
+  --color-foreground: #1d2a1d;
+  --color-card: #fffdf7;
+  --color-card-foreground: #1d2a1d;
+  --color-popover: #fffdf7;
+  --color-popover-foreground: #1d2a1d;
+  --color-primary: #253c2a;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #e8eadf;
+  --color-secondary-foreground: #1d2a1d;
+  --color-muted: #eef1e4;
+  --color-muted-foreground: #69735f;
+  --color-accent: #dce6c8;
+  --color-accent-foreground: #1d2a1d;
+  --color-border: #d9ddcd;
+  --color-input: #d9ddcd;
+  --color-ring: #536d37;
+  --radius: .7rem;
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; background: #f8f5eb; }
+  body { @apply bg-background text-foreground font-sans antialiased; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  button { cursor: pointer; }
+  [dir="rtl"] .font-display { font-family: "Noto Kufi Arabic", sans-serif; letter-spacing: -0.035em; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root { --ease-out: cubic-bezier(.23,1,.32,1); }
+  html { scroll-behavior: smooth; }
+  button, a { transition-timing-function: var(--ease-out); transition-duration: 180ms; transition-property: color, background-color, border-color, box-shadow, transform, opacity; }
+  button:active { transform: scale(.97); }
+  .motion-reveal { opacity: 0; transform: translateY(28px); transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out); }
+  .motion-reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .motion-reveal[data-reveal="hero"] { transform: translateY(18px); }
+  .motion-reveal[data-reveal="hero"].is-visible { transform: translateY(0); }
+  [data-reveal="card"] { transition-delay: 70ms; }
+  [data-reveal="card"]:nth-child(2n) { transition-delay: 120ms; }
+  [data-reveal="card"]:nth-child(3n) { transition-delay: 170ms; }
+  .motion-lift { transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out), background-color 220ms var(--ease-out); }
+  .motion-lift:hover { transform: translateY(-6px); box-shadow: 0 24px 54px rgba(39, 65, 47, .14); }
+  .motion-lift:focus-visible { outline: 3px solid rgba(83, 109, 55, .42); outline-offset: 4px; }
+  .motion-image { transition: transform 700ms var(--ease-out), filter 700ms var(--ease-out); }
+  .motion-image:hover { transform: scale(1.018) rotate(-.4deg); filter: saturate(1.05); }
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html.dark body { background: #132119; color: #edf1e7; }
+html.dark main { background: #132119 !important; color: #edf1e7; }
+html.dark main > section#home,
+html.dark main > section#method,
+html.dark main > section#order,
+html.dark main > section#tests { background: #132119 !important; }
+html.dark main > section#books { background: #1b3024 !important; }
+html.dark main > section#feedback { background: #294a37 !important; }
+html.dark nav { background: rgba(26, 45, 34, .92) !important; border-color: rgba(201, 217, 199, .16) !important; color: #edf1e7; }
+html.dark nav a, html.dark nav strong, html.dark nav small { color: #edf1e7; }
+html.dark main [class*="bg-\[#fffdf7\]"],
+html.dark main [class*="bg-white"] { background: #1f3026 !important; border-color: rgba(201, 217, 199, .15); }
+html.dark main section p { color: #c3d0c1; }
+html.dark main section h1,
+html.dark main section h2,
+html.dark main section h3,
+html.dark main section h4 { color: #edf1e7; }
+html.dark main section [class*="bg-white"] p,
+html.dark main section [class*="bg-\[#fffdf7\]"] p { color: #687360; }
+html.dark input,
+html.dark textarea,
+html.dark select { color: #edf1e7; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .motion-reveal { opacity: 1; transform: none; }
+  .motion-lift, .motion-image { transition: none; }
+}
