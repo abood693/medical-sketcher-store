@@ -276,6 +276,23 @@ class SDKServer {
       throw ForbiddenError("Invalid session cookie");
     }
 
+    // Local owner accounts are authenticated by the dedicated password route.
+    // Keep this path independent from Manus OAuth and from an optional DB row.
+    if (session.openId === "local-admin" && ENV.ownerOpenId === "local-admin") {
+      const now = new Date();
+      return {
+        id: -1,
+        openId: "local-admin",
+        name: session.name || "Owner",
+        email: null,
+        loginMethod: "local-password",
+        role: "admin",
+        createdAt: now,
+        updatedAt: now,
+        lastSignedIn: now,
+      };
+    }
+
     if (session.openId.startsWith(CRON_OPEN_ID_PREFIX)) {
       const userInfo = await this.getUserInfoWithJwt(sessionToken ?? "");
       const taskUid = userInfo.taskUid ?? null;
