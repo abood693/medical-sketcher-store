@@ -21,7 +21,9 @@ import { storageGetSignedUrl, storagePut } from "../storage";
 export const digitalProductsRouter = router({
   list: publicProcedure.query(() => listPublishedProducts()),
   demoCheckout: publicProcedure.mutation(async () => {
-    const paypal = await createPaypalOrder({ orderReference: "german-for-nurse-a1-1", amountCents: 500, currency: "JOD" });
+    // PayPal Checkout does not support JOD. The storefront price remains 5 JOD;
+    // Sandbox checkout uses a clearly-labelled USD equivalent for testing.
+    const paypal = await createPaypalOrder({ orderReference: "german-for-nurse-a1-1", amountCents: 700, currency: "USD" });
     return { approvalUrl: paypal.links?.find(link => link.rel === "approve")?.href ?? null };
   }),
   adminList: adminProcedure.query(() => listAllProducts()),
