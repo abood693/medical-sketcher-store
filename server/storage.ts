@@ -4,6 +4,17 @@
 
 import { ENV } from "./_core/env";
 
+function hasSupabaseStorage() {
+  return Boolean(ENV.supabaseUrl && ENV.supabaseServiceRoleKey);
+}
+
+function supabaseObjectUrl(path: string) {
+  return `${ENV.supabaseUrl.replace(/\\/+$/, "")}/storage/v1/object/${encodeURIComponent(ENV.supabaseBucket)}/${path
+    .split("/")
+    .map(encodeURIComponent)
+    .join("/")}`;
+}
+
 function getForgeConfig() {
   const forgeUrl = ENV.forgeApiUrl;
   const forgeKey = ENV.forgeApiKey;
@@ -33,6 +44,24 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream",
 ): Promise<{ key: string; url: string }> {
+  if (hasSupabaseStorage()) {
+    const key = appendHashSuffix(normalizeKey(relKey));
+    const response = await fetch(supabaseObjectUrl(key), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ENV.supabaseServiceRoleKey}`,
+        apikey: ENV.supabaseServiceRoleKey,
+        "Content-Type": contentType,
+        "x-upsert": "false",
+      },
+      body: data as any,
+    });
+    if (!response.ok) {
+      const msg = await response.text().catch(() => response.statusText);
+      throw new Error(`Supabase storage upload failed (${response.status}): ${msg}`);
+    }
+    return { key, url: `/supabase-storage/${key}` };
+  }
   const { forgeUrl, forgeKey } = getForgeConfig();
   const key = appendHashSuffix(normalizeKey(relKey));
 
@@ -77,6 +106,32 @@ export async function storageGet(relKey: string): Promise<{ key: string; url: st
 }
 
 export async function storageGetSignedUrl(relKey: string): Promise<string> {
+  if (hasSupabaseStorage()) {
+    const key = normalizeKey(relKey);
+    const response = await fetch(
+      `${ENV.supabaseUrl.replace(/\\/+$/, "")}/storage/v1/object/sign/${encodeURIComponent(ENV.supabaseBucket)}/${key
+        .split("/")
+        .map(encodeURIComponent)
+        .join("/")}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${ENV.supabaseServiceRoleKey}`,
+          apikey: ENV.supabaseServiceRoleKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ expiresIn: 60 * 60 }),
+      },
+    );
+    if (!response.ok) {
+      const msg = await response.text().catch(() => response.statusText);
+      throw new Error(`Supabase signed URL failed (${response.status}): ${msg}`);
+    }
+    const result = (await response.json()) as { signedURL?: string; signedUrl?: string };
+    const signed = result.signedURL ?? result.signedUrl;
+    if (!signed) throw new Error("Supabase returned an empty signed URL");
+    return signed.startsWith("http") ? signed : `${ENV.supabaseUrl.replace(/\\/+$/, "")}/storage/v1${signed}`;
+  }
   const { forgeUrl, forgeKey } = getForgeConfig();
   const key = normalizeKey(relKey);
 

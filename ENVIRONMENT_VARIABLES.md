@@ -17,6 +17,11 @@ OWNER_NAME=Company Owner
 
 BUILT_IN_FORGE_API_URL=https://forge.manus.im
 BUILT_IN_FORGE_API_KEY=server_side_api_key
+
+# Alternative private PDF storage (recommended when deploying outside Manus)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=server_side_service_role_key
+SUPABASE_STORAGE_BUCKET=products
 VITE_FRONTEND_FORGE_API_URL=https://forge.manus.im
 VITE_FRONTEND_FORGE_API_KEY=frontend_api_key_if_required
 
