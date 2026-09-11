@@ -8,7 +8,16 @@
     <title>medical.sketcher — German for Nurses</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="app-boot" role="status" aria-label="Loading medical.sketcher">
+        <div class="app-boot__mark">M</div>
+        <strong>medical.sketcher</strong>
+        <span>Loading your learning space…</span>
+      </div>
+    </div>
+    <style>
+      .app-boot{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:12px;background:#f8f5eb;color:#27412f;font-family:Arial,sans-serif}.app-boot__mark{display:grid;place-items:center;width:54px;height:54px;border-radius:18px;background:#27412f;color:#fff;font-family:Georgia,serif;font-size:26px}.app-boot strong{font-family:Georgia,serif;font-size:22px}.app-boot span{color:#687360;font-size:13px}
+    </style>
     <script type="module" src="/src/main.tsx"></script>
     <script defer src="%VITE_ANALYTICS_ENDPOINT%/umami" data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
   </body>
