@@ -72,7 +72,8 @@ export const digitalProductsRouter = router({
     .input(
       z.object({
         fileName: z.string().min(1).max(120),
-        base64: z.string().min(1).max(15000000),
+        // Base64 expands binary files by roughly 33%; allow PDFs up to 100MB.
+        base64: z.string().min(1).max(140000000),
       })
     )
     .mutation(async ({ input }) => {

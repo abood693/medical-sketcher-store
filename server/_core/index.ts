@@ -33,8 +33,10 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // PDF uploads are sent as base64 JSON from the owner studio. Keep this
+  // comfortably above the 82MB workbook size while still bounded.
+  app.use(express.json({ limit: "140mb" }));
+  app.use(express.urlencoded({ limit: "140mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
   registerLocalAdminRoute(app);
