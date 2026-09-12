@@ -9,7 +9,7 @@ function hasSupabaseStorage() {
 }
 
 function supabaseObjectUrl(path: string) {
-  return `${ENV.supabaseUrl.replace(/\\/+$/, "")}/storage/v1/object/${encodeURIComponent(ENV.supabaseBucket)}/${path
+  return `${ENV.supabaseUrl.replace(/\/+$/, "")}/storage/v1/object/${encodeURIComponent(ENV.supabaseBucket)}/${path
     .split("/")
     .map(encodeURIComponent)
     .join("/")}`;
