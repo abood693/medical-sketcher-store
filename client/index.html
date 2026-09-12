@@ -16,15 +16,207 @@
   </head>
   <body>
     <div id="root">
-      <div class="app-boot" role="status" aria-label="Loading medical.sketcher">
-        <div class="app-boot__mark">M</div>
-        <strong>medical.sketcher</strong>
-        <span>Loading your learning space…</span>
+      <div id="loading-screen" role="status" aria-live="polite" aria-label="Loading medical.sketcher">
+        <div class="ls-bg-pattern"></div>
+        <div class="ls-border"></div>
+
+        <svg class="ls-ecg" width="220" height="36" viewBox="0 0 220 36" aria-hidden="true">
+          <polyline points="0,18 30,18 45,4 55,32 65,4 75,18 110,18 125,10 135,26 145,10 155,18 220,18" fill="none" stroke="#3a4e1a" stroke-width="1.5"/>
+        </svg>
+
+        <svg class="ls-stethoscope" width="80" height="80" viewBox="0 0 80 80" aria-hidden="true">
+          <ellipse cx="30" cy="60" rx="14" ry="14" fill="none" stroke="#3a4e1a" stroke-width="2"/>
+          <path d="M30 46 C30 30 50 30 50 20 C50 12 44 8 38 8 C32 8 26 12 26 20" fill="none" stroke="#3a4e1a" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="38" cy="8" r="4" fill="none" stroke="#3a4e1a" stroke-width="2"/>
+          <circle cx="30" cy="60" r="5" fill="#3a4e1a"/>
+        </svg>
+
+        <svg class="ls-cross" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+          <rect x="14" y="2" width="12" height="36" rx="3" fill="#3a4e1a"/>
+          <rect x="2" y="14" width="36" height="12" rx="3" fill="#3a4e1a"/>
+        </svg>
+
+        <img
+          class="ls-book"
+          src="/medical-sketcher-hero.jpg"
+          alt="German for Nurse Book"
+          onerror="this.style.display='none'; document.getElementById('book-fallback').style.display='flex';"
+        />
+
+        <div id="book-fallback" style="display:none; width:130px; height:170px; background:#fff; border-radius:4px; border:1px solid #5a6e2c44; flex-direction:column; align-items:center; justify-content:center; z-index:2; padding:12px; box-sizing:border-box; position:relative;">
+          <div style="font-family:Arial; font-weight:900; font-size:22px; color:#222; letter-spacing:2px; text-align:center; line-height:1.1;">GERMAN</div>
+          <div style="font-family:Arial; font-weight:700; font-size:13px; color:#5a6e2c; text-align:center; margin-top:4px;">FOR NURSE</div>
+          <div style="font-family:Arial; font-weight:700; font-size:12px; color:#5a6e2c; margin-top:2px;">A1.1</div>
+        </div>
+
+        <div class="ls-title">GERMAN FOR NURSES A1.1</div>
+        <div class="ls-sub">Learn · Practice · Care</div>
+
+        <div class="ls-bar-wrap">
+          <div class="ls-bar"></div>
+        </div>
+
+        <div class="ls-dots" aria-hidden="true">
+          <div class="ls-dot"></div>
+          <div class="ls-dot"></div>
+          <div class="ls-dot"></div>
+        </div>
+
+        <div class="ls-tag">Made for nursing students</div>
       </div>
     </div>
+
     <style>
-      .app-boot{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:12px;background:#f8f5eb;color:#27412f;font-family:Arial,sans-serif}.app-boot__mark{display:grid;place-items:center;width:54px;height:54px;border-radius:18px;background:#27412f;color:#fff;font-family:Georgia,serif;font-size:26px}.app-boot strong{font-family:Georgia,serif;font-size:22px}.app-boot span{color:#687360;font-size:13px}
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background: #f5f0e8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+        overflow: hidden;
+      }
+      #loading-screen.hide {
+        opacity: 0;
+        visibility: hidden;
+      }
+      #loading-screen .ls-bg-pattern {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 30% 30%, #e8dcc8 0%, #f5f0e8 60%);
+      }
+      #loading-screen .ls-border {
+        position: absolute;
+        inset: 12px;
+        border: 1.5px solid #5a6e2c44;
+        border-radius: 8px;
+        pointer-events: none;
+      }
+      #loading-screen .ls-ecg {
+        position: absolute;
+        top: 28px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.18;
+      }
+      #loading-screen .ls-book {
+        width: 180px;
+        height: auto;
+        position: relative;
+        z-index: 2;
+        animation: bookFloat 3s ease-in-out infinite;
+        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.1));
+      }
+      @keyframes bookFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+      #loading-screen .ls-title {
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: #3a4e1a;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: 20px;
+        z-index: 2;
+      }
+      #loading-screen .ls-sub {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        color: #6b7c3a;
+        margin-top: 4px;
+        z-index: 2;
+        letter-spacing: 1px;
+      }
+      #loading-screen .ls-bar-wrap {
+        width: 200px;
+        height: 3px;
+        background: #d4c9a8;
+        border-radius: 999px;
+        margin-top: 16px;
+        z-index: 2;
+        overflow: hidden;
+      }
+      #loading-screen .ls-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #5a6e2c, #8a9e3c);
+        border-radius: 999px;
+        animation: loadBar 2.5s ease-in-out infinite;
+      }
+      @keyframes loadBar {
+        0% { width: 0%; }
+        60% { width: 85%; }
+        90% { width: 95%; }
+        100% { width: 100%; }
+      }
+      #loading-screen .ls-dots {
+        display: flex;
+        gap: 6px;
+        margin-top: 14px;
+        z-index: 2;
+      }
+      #loading-screen .ls-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #5a6e2c;
+        opacity: 0.3;
+        animation: dotPulse 1.2s ease-in-out infinite;
+      }
+      #loading-screen .ls-dot:nth-child(2) { animation-delay: 0.2s; }
+      #loading-screen .ls-dot:nth-child(3) { animation-delay: 0.4s; }
+      @keyframes dotPulse {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.3); }
+      }
+      #loading-screen .ls-stethoscope {
+        position: absolute;
+        bottom: 40px;
+        left: 36px;
+        opacity: 0.12;
+      }
+      #loading-screen .ls-cross {
+        position: absolute;
+        bottom: 52px;
+        right: 44px;
+        opacity: 0.12;
+      }
+      #loading-screen .ls-tag {
+        position: absolute;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 1px solid #5a6e2c55;
+        border-radius: 20px;
+        padding: 3px 14px;
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        color: #5a6e2c;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        z-index: 2;
+      }
     </style>
+
+    <script>
+      window.addEventListener('load', function () {
+        const loader = document.getElementById('loading-screen');
+        if (!loader) return;
+
+        setTimeout(function () {
+          loader.classList.add('hide');
+          setTimeout(function () {
+            loader.remove();
+          }, 600);
+        }, 600);
+      });
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
     <script defer src="%VITE_ANALYTICS_ENDPOINT%/umami" data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
   </body>
