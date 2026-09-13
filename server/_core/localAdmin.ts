@@ -33,7 +33,19 @@ export function registerLocalAdminRoute(app: Express) {
       return;
     }
     const openId = "local-admin";
-    await db.upsertUser({ openId, name: username, loginMethod: "local-password", lastSignedIn: new Date() });
+    try {
+      await db.upsertUser({
+        openId,
+        name: username,
+        loginMethod: "local-password",
+        role: "admin",
+        lastSignedIn: new Date(),
+      });
+    } catch (error) {
+      console.error("[LocalAdmin] Failed to save owner in the database:", error);
+      res.status(503).json({ error: "Owner database is not available" });
+      return;
+    }
     const token = await sdk.createSessionToken(openId, { name: username, expiresInMs: ONE_YEAR_MS });
     res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });
     res.json({ success: true });
