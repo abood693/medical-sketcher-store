@@ -18,8 +18,14 @@ function verifyPassword(password: string, encoded: string) {
 export function registerLocalAdminRoute(app: Express) {
   app.post("/api/local-admin/login", async (req: Request, res: Response) => {
     const { username, password } = req.body ?? {};
-    if (!ENV.adminUsername || !ENV.adminPasswordHash) {
-      res.status(503).json({ error: "Owner login is not configured" });
+    const missing = [
+      !ENV.adminUsername && "ADMIN_USERNAME",
+      !ENV.adminPasswordHash && "ADMIN_PASSWORD_HASH",
+    ].filter(Boolean);
+    if (missing.length > 0) {
+      res.status(503).json({
+        error: `Owner login is not configured. Missing: ${missing.join(", ")}`,
+      });
       return;
     }
     if (typeof username !== "string" || typeof password !== "string" || username !== ENV.adminUsername || !verifyPassword(password, ENV.adminPasswordHash)) {
