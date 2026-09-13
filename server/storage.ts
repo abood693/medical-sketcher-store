@@ -109,7 +109,7 @@ export async function storageGetSignedUrl(relKey: string): Promise<string> {
   if (hasSupabaseStorage()) {
     const key = normalizeKey(relKey);
     const response = await fetch(
-      `${ENV.supabaseUrl.replace(/\\/+$/, "")}/storage/v1/object/sign/${encodeURIComponent(ENV.supabaseBucket)}/${key
+      `${ENV.supabaseUrl.replace(/\/+$/, "")}/storage/v1/object/sign/${encodeURIComponent(ENV.supabaseBucket)}/${key
         .split("/")
         .map(encodeURIComponent)
         .join("/")}`,
@@ -130,7 +130,7 @@ export async function storageGetSignedUrl(relKey: string): Promise<string> {
     const result = (await response.json()) as { signedURL?: string; signedUrl?: string };
     const signed = result.signedURL ?? result.signedUrl;
     if (!signed) throw new Error("Supabase returned an empty signed URL");
-    return signed.startsWith("http") ? signed : `${ENV.supabaseUrl.replace(/\\/+$/, "")}/storage/v1${signed}`;
+    return signed.startsWith("http") ? signed : `${ENV.supabaseUrl.replace(/\/+$/, "")}/storage/v1${signed}`;
   }
   const { forgeUrl, forgeKey } = getForgeConfig();
   const key = normalizeKey(relKey);
