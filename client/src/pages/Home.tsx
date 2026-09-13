@@ -1,7 +1,30 @@
 import { AIChatBox } from "@/components/AIChatBox";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, BrainCircuit, Check, CheckCircle2, ChevronDown, ClipboardCheck, Download, HeartPulse, Instagram, Languages, Menu, MessageCircle, Moon, Send, ShieldCheck, Sparkles, Star, Sun, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  BookOpen,
+  BrainCircuit,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ClipboardCheck,
+  Download,
+  HeartPulse,
+  Instagram,
+  Languages,
+  Menu,
+  MessageCircle,
+  Moon,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Sun,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Link } from "wouter";
@@ -12,71 +35,726 @@ type Level = "A1/A2" | "B1/B2" | "C1/C2";
 type Shelf = "A1.1" | "A1.2" | "B1.1" | "B1.2" | "C1.1" | "C1.2";
 
 type Copy = {
-  books: string; tests: string; method: string; owner: string; heroTag: string; hero: string; intro: string; explore: string; check: string;
-  pathway: string; pathwayText: string; library: string; libraryText: string; testTitle: string; testText: string; start: string; result: string;
-  score: string; retry: string; book: string; empty: string; assistant: string; assistantIntro: string; secure: string; learnLine: string;
-  share: string; preview: string; reviews: string; reviewsEmpty: string; available: string; availableNote: string; flagshipEyebrow: string;
-  flagshipTitle: string; flagshipText: string; orderGuide: string; sampleNote: string; orderTitle: string; orderText: string; stepOne: string;
-  stepOneText: string; stepTwo: string; stepTwoText: string; stepThree: string; stepThreeText: string; faqTitle: string; faqOne: string;
-  faqOneText: string; faqTwo: string; faqTwoText: string; faqThree: string; faqThreeText: string; feedbackTitle: string; feedbackText: string;
-  feedbackNote: string; shareNotice: string; shareFallback: string; chatTitle: string; chatText: string; heroImageAlt: string;
+  books: string;
+  tests: string;
+  method: string;
+  owner: string;
+  heroTag: string;
+  hero: string;
+  intro: string;
+  explore: string;
+  check: string;
+  pathway: string;
+  pathwayText: string;
+  library: string;
+  libraryText: string;
+  testTitle: string;
+  testText: string;
+  start: string;
+  result: string;
+  score: string;
+  retry: string;
+  book: string;
+  empty: string;
+  assistant: string;
+  assistantIntro: string;
+  secure: string;
+  learnLine: string;
+  share: string;
+  preview: string;
+  reviews: string;
+  reviewsEmpty: string;
+  available: string;
+  availableNote: string;
+  flagshipEyebrow: string;
+  flagshipTitle: string;
+  flagshipText: string;
+  orderGuide: string;
+  sampleNote: string;
+  orderTitle: string;
+  orderText: string;
+  stepOne: string;
+  stepOneText: string;
+  stepTwo: string;
+  stepTwoText: string;
+  stepThree: string;
+  stepThreeText: string;
+  faqTitle: string;
+  faqOne: string;
+  faqOneText: string;
+  faqTwo: string;
+  faqTwoText: string;
+  faqThree: string;
+  faqThreeText: string;
+  feedbackTitle: string;
+  feedbackText: string;
+  feedbackNote: string;
+  shareNotice: string;
+  shareFallback: string;
+  chatTitle: string;
+  chatText: string;
+  heroImageAlt: string;
 };
 
 const text: Record<Locale, Copy> = {
-  en: { books: "Books", tests: "Level tests", method: "Learning method", owner: "Owner studio", heroTag: "GERMAN FOR NURSING", hero: "German that works on the ward.", intro: "A visual learning system for nurses who want clearer conversations, calmer shifts and a confident first step into German healthcare.", explore: "Explore the pathway", check: "Find my level", pathway: "Your next shift starts here.", pathwayText: "Build practical German in three calm stages — from first introductions to precise clinical communication.", library: "The professional library.", libraryText: "One focused workbook at a time, built around the language nurses actually use.", testTitle: "Know your next step.", testText: "The A1.1 assessment follows the workbook lessons and gives you an instant practice result.", start: "Start assessment", result: "See my result", score: "Your score", retry: "Try again", book: "Order on Instagram", empty: "Coming soon", assistant: "Ask abdelrazaq", assistantIntro: "Hello, I’m abdelrazaq. I can help you choose a level, find a book or practise a nursing phrase.", secure: "Learn with clarity", learnLine: "LEARN · PRACTICE · CARE", share: "Share book", preview: "View free sample", reviews: "Student feedback", reviewsEmpty: "Verified student feedback will appear here.", available: "Available now", availableNote: "Cover, free sample and direct ordering are ready.", flagshipEyebrow: "THE FIRST WORKBOOK", flagshipTitle: "German for Nurse A1.1", flagshipText: "A practical first step for nurses learning essential German communication in healthcare — with visual lessons, useful vocabulary and structured practice.", orderGuide: "5 JD · direct Instagram order", sampleNote: "Preview four pages before you decide.", orderTitle: "A simple path to your copy.", orderText: "No complicated checkout. Choose the book, preview it, then send a direct message to @medical.sketcher.", stepOne: "Preview", stepOneText: "See four real sample pages and understand the visual rhythm.", stepTwo: "Message", stepTwoText: "Open Instagram Direct with a ready-to-send product request.", stepThree: "Receive", stepThreeText: "Confirm payment and delivery details in the conversation.", faqTitle: "Questions, answered.", faqOne: "Is A1.1 suitable for beginners?", faqOneText: "Yes. It starts with introductions and builds toward everyday nursing communication.", faqTwo: "What do I receive?", faqTwoText: "The book details and delivery method are confirmed with you in the Instagram conversation before payment.", faqThree: "Are the assessments certificates?", faqThreeText: "No. They are practice assessments designed to help you check your progress.", feedbackTitle: "Your progress deserves a real voice.", feedbackText: "When learners complete a book, we will invite them to share honest feedback. Until then, this space stays intentionally quiet.", feedbackNote: "Only approved, verified student feedback will be published.", shareNotice: "Share sheet opened", shareFallback: "Message copied — Instagram opened", chatTitle: "Study with abdelrazaq", chatText: "Ask about your level, the workbook or a German phrase for your next shift.", heroImageAlt: "Illustrated nurse learning German" },
-  de: { books: "Bücher", tests: "Einstufungstests", method: "Lernmethode", owner: "Besitzer-Studio", heroTag: "DEUTSCH FÜR DIE PFLEGE", hero: "Deutsch, das auf der Station hilft.", intro: "Ein visuelles Lernsystem für Pflegekräfte, die klarer kommunizieren, ruhiger arbeiten und sicher in die deutsche Pflege starten möchten.", explore: "Lernweg entdecken", check: "Mein Niveau finden", pathway: "Deine nächste Schicht beginnt hier.", pathwayText: "Baue praktisches Deutsch in drei ruhigen Stufen auf — von der ersten Vorstellung bis zur präzisen klinischen Kommunikation.", library: "Die Fachbibliothek.", libraryText: "Ein fokussiertes Arbeitsbuch nach dem anderen, mit der Sprache aus dem Pflegealltag.", testTitle: "Kenne deinen nächsten Schritt.", testText: "Der A1.1-Test folgt den Lektionen und zeigt dir sofort dein Übungsergebnis.", start: "Test starten", result: "Ergebnis sehen", score: "Dein Ergebnis", retry: "Noch einmal", book: "Auf Instagram bestellen", empty: "Demnächst verfügbar", assistant: "abdelrazaq fragen", assistantIntro: "Hallo, ich bin abdelrazaq. Ich helfe dir bei Niveau, Buchauswahl oder einer Pflegephrase.", secure: "Klar lernen", learnLine: "LERNEN · ÜBEN · PFLEGEN", share: "Buch teilen", preview: "Kostenlose Leseprobe", reviews: "Stimmen der Lernenden", reviewsEmpty: "Verifizierte Rückmeldungen erscheinen hier.", available: "Jetzt verfügbar", availableNote: "Cover, Leseprobe und direkte Bestellung sind bereit.", flagshipEyebrow: "DAS ERSTE ARBEITSBUCH", flagshipTitle: "German for Nurse A1.1", flagshipText: "Ein praktischer Einstieg für Pflegekräfte in die wichtige Kommunikation im Gesundheitswesen — mit visuellen Lektionen, nützlichen Wörtern und strukturiertem Üben.", orderGuide: "5 JD · direkte Instagram-Bestellung", sampleNote: "Sieh dir vier Seiten an, bevor du dich entscheidest.", orderTitle: "Ein einfacher Weg zu deinem Exemplar.", orderText: "Kein komplizierter Checkout. Wähle das Buch, sieh die Leseprobe und schreibe @medical.sketcher direkt.", stepOne: "Vorschau", stepOneText: "Sieh vier echte Probeseiten und den visuellen Lernrhythmus.", stepTwo: "Nachricht", stepTwoText: "Öffne Instagram Direct mit einer fertigen Buchanfrage.", stepThree: "Erhalten", stepThreeText: "Bestätige Zahlung und Lieferung im Gespräch.", faqTitle: "Fragen? Hier sind Antworten.", faqOne: "Ist A1.1 für Anfänger geeignet?", faqOneText: "Ja. Das Buch beginnt mit Vorstellen und führt in die alltägliche Pflegekommunikation.", faqTwo: "Was erhalte ich?", faqTwoText: "Buchdetails und Lieferart werden vor der Zahlung im Instagram-Gespräch bestätigt.", faqThree: "Sind die Tests Zertifikate?", faqThreeText: "Nein. Sie sind Übungstests zur Kontrolle deines Lernfortschritts.", feedbackTitle: "Dein Fortschritt verdient eine echte Stimme.", feedbackText: "Nach dem Buch laden wir Lernende zu ehrlichem Feedback ein. Bis dahin bleibt dieser Bereich bewusst leer.", feedbackNote: "Nur geprüfte und freigegebene Rückmeldungen werden veröffentlicht.", shareNotice: "Teilen geöffnet", shareFallback: "Nachricht kopiert — Instagram geöffnet", chatTitle: "Lerne mit abdelrazaq", chatText: "Frage nach Niveau, Arbeitsbuch oder einer Pflegephrase für deine nächste Schicht.", heroImageAlt: "Illustration einer lernenden Pflegekraft" },
-  ar: { books: "الكتب", tests: "اختبارات المستوى", method: "منهج التعلم", owner: "استوديو المالك", heroTag: "الألمانية للتمريض", hero: "ألمانية تساعدك داخل القسم.", intro: "نظام تعلّم بصري للممرضين والممرضات الذين يريدون تواصلاً أوضح، ووردية أكثر هدوءًا، وخطوة واثقة نحو الرعاية الصحية بالألمانية.", explore: "استكشف المسار", check: "اعرف مستواي", pathway: "وردية جديدة تبدأ من هنا.", pathwayText: "ابنِ لغتك الألمانية العملية عبر ثلاث مراحل هادئة، من التعارف الأول حتى التواصل السريري الدقيق.", library: "مكتبتك المهنية.", libraryText: "كتاب عملي واحد في كل مرة، مبني على اللغة التي يستخدمها طاقم التمريض فعليًا.", testTitle: "اعرف خطوتك التالية.", testText: "اختبار A1.1 يتبع دروس الكتاب ويعطيك نتيجة تدريبية فورية.", start: "ابدأ التقييم", result: "اعرض نتيجتي", score: "نتيجتك", retry: "أعد المحاولة", book: "اطلب عبر Instagram", empty: "قريبًا", assistant: "اسأل abdelrazaq", assistantIntro: "أهلًا، أنا abdelrazaq. أساعدك في اختيار المستوى أو الكتاب أو التدرب على جملة تمريضية.", secure: "تعلّم بوضوح", learnLine: "تَعَلَّم · تَدَرَّب · اهتَم", share: "شارك الكتاب", preview: "شاهد عينة مجانية", reviews: "آراء الطلاب", reviewsEmpty: "ستظهر هنا آراء الطلاب الموثقة.", available: "متاح الآن", availableNote: "الغلاف والعينة المجانية والطلب المباشر جاهزة.", flagshipEyebrow: "الكتاب الأول", flagshipTitle: "German for Nurse A1.1", flagshipText: "خطوتك العملية الأولى لتعلم التواصل الأساسي بالألمانية في مجال الرعاية الصحية، مع دروس بصرية ومفردات مفيدة وتدريب منظم.", orderGuide: "5 دنانير · طلب مباشر عبر Instagram", sampleNote: "شاهد أربع صفحات قبل اتخاذ القرار.", orderTitle: "طريق بسيط للحصول على نسختك.", orderText: "لا يوجد Checkout معقد. اختر الكتاب، شاهد العينة، ثم أرسل رسالة مباشرة إلى @medical.sketcher.", stepOne: "عاين", stepOneText: "شاهد أربع صفحات حقيقية وتعرّف على أسلوب الكتاب البصري.", stepTwo: "أرسل", stepTwoText: "افتح محادثة Instagram برسالة طلب جاهزة.", stepThree: "استلم", stepThreeText: "أكد الدفع وطريقة التسليم داخل المحادثة.", faqTitle: "أسئلة لها إجابات.", faqOne: "هل A1.1 مناسب للمبتدئين؟", faqOneText: "نعم. يبدأ بالتعارف ويبني تدريجيًا لغة التواصل اليومية في التمريض.", faqTwo: "ماذا أستلم؟", faqTwoText: "يتم تأكيد تفاصيل الكتاب وطريقة التسليم معك عبر Instagram قبل الدفع.", faqThree: "هل الاختبارات شهادات؟", faqThreeText: "لا. هي اختبارات تدريبية تساعدك على قياس تقدمك.", feedbackTitle: "تقدمك يستحق رأيًا حقيقيًا.", feedbackText: "بعد إكمال الكتب سندعو الطلاب لمشاركة آرائهم بصدق. وحتى ذلك الوقت سيبقى هذا القسم فارغًا عن قصد.", feedbackNote: "لن ننشر إلا الآراء الموثقة والموافق عليها.", shareNotice: "تم فتح خيارات المشاركة", shareFallback: "تم نسخ الرسالة وفتح Instagram", chatTitle: "تعلّم مع abdelrazaq", chatText: "اسأل عن مستواك أو الكتاب أو جملة تمريضية تحتاجها في ورديتك القادمة.", heroImageAlt: "رسمة ممرض يتعلم الألمانية" }
+  en: {
+    books: "Books",
+    tests: "Level tests",
+    method: "Learning method",
+    owner: "Owner studio",
+    heroTag: "GERMAN FOR NURSING",
+    hero: "German that works on the ward.",
+    intro:
+      "A visual learning system for nurses who want clearer conversations, calmer shifts and a confident first step into German healthcare.",
+    explore: "Explore the pathway",
+    check: "Find my level",
+    pathway: "Your next shift starts here.",
+    pathwayText:
+      "Build practical German in three calm stages — from first introductions to precise clinical communication.",
+    library: "The professional library.",
+    libraryText:
+      "One focused workbook at a time, built around the language nurses actually use.",
+    testTitle: "Know your next step.",
+    testText:
+      "The A1.1 assessment follows the workbook lessons and gives you an instant practice result.",
+    start: "Start assessment",
+    result: "See my result",
+    score: "Your score",
+    retry: "Try again",
+    book: "Order on Instagram",
+    empty: "Coming soon",
+    assistant: "Ask abdelrazaq",
+    assistantIntro:
+      "Hello, I’m abdelrazaq. I can help you choose a level, find a book or practise a nursing phrase.",
+    secure: "Learn with clarity",
+    learnLine: "LEARN · PRACTICE · CARE",
+    share: "Share book",
+    preview: "View free sample",
+    reviews: "Student feedback",
+    reviewsEmpty: "Verified student feedback will appear here.",
+    available: "Available now",
+    availableNote: "Cover, free sample and direct ordering are ready.",
+    flagshipEyebrow: "THE FIRST WORKBOOK",
+    flagshipTitle: "German for Nurse A1.1",
+    flagshipText:
+      "A practical first step for nurses learning essential German communication in healthcare — with visual lessons, useful vocabulary and structured practice.",
+    orderGuide: "5 JD · direct Instagram order",
+    sampleNote: "Preview four pages before you decide.",
+    orderTitle: "A simple path to your copy.",
+    orderText:
+      "No complicated checkout. Choose the book, preview it, then send a direct message to @medical.sketcher.",
+    stepOne: "Preview",
+    stepOneText: "See four real sample pages and understand the visual rhythm.",
+    stepTwo: "Message",
+    stepTwoText: "Open Instagram Direct with a ready-to-send product request.",
+    stepThree: "Receive",
+    stepThreeText: "Confirm payment and delivery details in the conversation.",
+    faqTitle: "Questions, answered.",
+    faqOne: "Is A1.1 suitable for beginners?",
+    faqOneText:
+      "Yes. It starts with introductions and builds toward everyday nursing communication.",
+    faqTwo: "What do I receive?",
+    faqTwoText:
+      "The book details and delivery method are confirmed with you in the Instagram conversation before payment.",
+    faqThree: "Are the assessments certificates?",
+    faqThreeText:
+      "No. They are practice assessments designed to help you check your progress.",
+    feedbackTitle: "Your progress deserves a real voice.",
+    feedbackText:
+      "When learners complete a book, we will invite them to share honest feedback. Until then, this space stays intentionally quiet.",
+    feedbackNote: "Only approved, verified student feedback will be published.",
+    shareNotice: "Share sheet opened",
+    shareFallback: "Message copied — Instagram opened",
+    chatTitle: "Study with abdelrazaq",
+    chatText:
+      "Ask about your level, the workbook or a German phrase for your next shift.",
+    heroImageAlt: "Illustrated nurse learning German",
+  },
+  de: {
+    books: "Bücher",
+    tests: "Einstufungstests",
+    method: "Lernmethode",
+    owner: "Besitzer-Studio",
+    heroTag: "DEUTSCH FÜR DIE PFLEGE",
+    hero: "Deutsch, das auf der Station hilft.",
+    intro:
+      "Ein visuelles Lernsystem für Pflegekräfte, die klarer kommunizieren, ruhiger arbeiten und sicher in die deutsche Pflege starten möchten.",
+    explore: "Lernweg entdecken",
+    check: "Mein Niveau finden",
+    pathway: "Deine nächste Schicht beginnt hier.",
+    pathwayText:
+      "Baue praktisches Deutsch in drei ruhigen Stufen auf — von der ersten Vorstellung bis zur präzisen klinischen Kommunikation.",
+    library: "Die Fachbibliothek.",
+    libraryText:
+      "Ein fokussiertes Arbeitsbuch nach dem anderen, mit der Sprache aus dem Pflegealltag.",
+    testTitle: "Kenne deinen nächsten Schritt.",
+    testText:
+      "Der A1.1-Test folgt den Lektionen und zeigt dir sofort dein Übungsergebnis.",
+    start: "Test starten",
+    result: "Ergebnis sehen",
+    score: "Dein Ergebnis",
+    retry: "Noch einmal",
+    book: "Auf Instagram bestellen",
+    empty: "Demnächst verfügbar",
+    assistant: "abdelrazaq fragen",
+    assistantIntro:
+      "Hallo, ich bin abdelrazaq. Ich helfe dir bei Niveau, Buchauswahl oder einer Pflegephrase.",
+    secure: "Klar lernen",
+    learnLine: "LERNEN · ÜBEN · PFLEGEN",
+    share: "Buch teilen",
+    preview: "Kostenlose Leseprobe",
+    reviews: "Stimmen der Lernenden",
+    reviewsEmpty: "Verifizierte Rückmeldungen erscheinen hier.",
+    available: "Jetzt verfügbar",
+    availableNote: "Cover, Leseprobe und direkte Bestellung sind bereit.",
+    flagshipEyebrow: "DAS ERSTE ARBEITSBUCH",
+    flagshipTitle: "German for Nurse A1.1",
+    flagshipText:
+      "Ein praktischer Einstieg für Pflegekräfte in die wichtige Kommunikation im Gesundheitswesen — mit visuellen Lektionen, nützlichen Wörtern und strukturiertem Üben.",
+    orderGuide: "5 JD · direkte Instagram-Bestellung",
+    sampleNote: "Sieh dir vier Seiten an, bevor du dich entscheidest.",
+    orderTitle: "Ein einfacher Weg zu deinem Exemplar.",
+    orderText:
+      "Kein komplizierter Checkout. Wähle das Buch, sieh die Leseprobe und schreibe @medical.sketcher direkt.",
+    stepOne: "Vorschau",
+    stepOneText: "Sieh vier echte Probeseiten und den visuellen Lernrhythmus.",
+    stepTwo: "Nachricht",
+    stepTwoText: "Öffne Instagram Direct mit einer fertigen Buchanfrage.",
+    stepThree: "Erhalten",
+    stepThreeText: "Bestätige Zahlung und Lieferung im Gespräch.",
+    faqTitle: "Fragen? Hier sind Antworten.",
+    faqOne: "Ist A1.1 für Anfänger geeignet?",
+    faqOneText:
+      "Ja. Das Buch beginnt mit Vorstellen und führt in die alltägliche Pflegekommunikation.",
+    faqTwo: "Was erhalte ich?",
+    faqTwoText:
+      "Buchdetails und Lieferart werden vor der Zahlung im Instagram-Gespräch bestätigt.",
+    faqThree: "Sind die Tests Zertifikate?",
+    faqThreeText:
+      "Nein. Sie sind Übungstests zur Kontrolle deines Lernfortschritts.",
+    feedbackTitle: "Dein Fortschritt verdient eine echte Stimme.",
+    feedbackText:
+      "Nach dem Buch laden wir Lernende zu ehrlichem Feedback ein. Bis dahin bleibt dieser Bereich bewusst leer.",
+    feedbackNote:
+      "Nur geprüfte und freigegebene Rückmeldungen werden veröffentlicht.",
+    shareNotice: "Teilen geöffnet",
+    shareFallback: "Nachricht kopiert — Instagram geöffnet",
+    chatTitle: "Lerne mit abdelrazaq",
+    chatText:
+      "Frage nach Niveau, Arbeitsbuch oder einer Pflegephrase für deine nächste Schicht.",
+    heroImageAlt: "Illustration einer lernenden Pflegekraft",
+  },
+  ar: {
+    books: "الكتب",
+    tests: "اختبارات المستوى",
+    method: "منهج التعلم",
+    owner: "استوديو المالك",
+    heroTag: "الألمانية للتمريض",
+    hero: "ألمانية تساعدك داخل القسم.",
+    intro:
+      "نظام تعلّم بصري للممرضين والممرضات الذين يريدون تواصلاً أوضح، ووردية أكثر هدوءًا، وخطوة واثقة نحو الرعاية الصحية بالألمانية.",
+    explore: "استكشف المسار",
+    check: "اعرف مستواي",
+    pathway: "وردية جديدة تبدأ من هنا.",
+    pathwayText:
+      "ابنِ لغتك الألمانية العملية عبر ثلاث مراحل هادئة، من التعارف الأول حتى التواصل السريري الدقيق.",
+    library: "مكتبتك المهنية.",
+    libraryText:
+      "كتاب عملي واحد في كل مرة، مبني على اللغة التي يستخدمها طاقم التمريض فعليًا.",
+    testTitle: "اعرف خطوتك التالية.",
+    testText: "اختبار A1.1 يتبع دروس الكتاب ويعطيك نتيجة تدريبية فورية.",
+    start: "ابدأ التقييم",
+    result: "اعرض نتيجتي",
+    score: "نتيجتك",
+    retry: "أعد المحاولة",
+    book: "اطلب عبر Instagram",
+    empty: "قريبًا",
+    assistant: "اسأل abdelrazaq",
+    assistantIntro:
+      "أهلًا، أنا abdelrazaq. أساعدك في اختيار المستوى أو الكتاب أو التدرب على جملة تمريضية.",
+    secure: "تعلّم بوضوح",
+    learnLine: "تَعَلَّم · تَدَرَّب · اهتَم",
+    share: "شارك الكتاب",
+    preview: "شاهد عينة مجانية",
+    reviews: "آراء الطلاب",
+    reviewsEmpty: "ستظهر هنا آراء الطلاب الموثقة.",
+    available: "متاح الآن",
+    availableNote: "الغلاف والعينة المجانية والطلب المباشر جاهزة.",
+    flagshipEyebrow: "الكتاب الأول",
+    flagshipTitle: "German for Nurse A1.1",
+    flagshipText:
+      "خطوتك العملية الأولى لتعلم التواصل الأساسي بالألمانية في مجال الرعاية الصحية، مع دروس بصرية ومفردات مفيدة وتدريب منظم.",
+    orderGuide: "5 دنانير · طلب مباشر عبر Instagram",
+    sampleNote: "شاهد أربع صفحات قبل اتخاذ القرار.",
+    orderTitle: "طريق بسيط للحصول على نسختك.",
+    orderText:
+      "لا يوجد Checkout معقد. اختر الكتاب، شاهد العينة، ثم أرسل رسالة مباشرة إلى @medical.sketcher.",
+    stepOne: "عاين",
+    stepOneText: "شاهد أربع صفحات حقيقية وتعرّف على أسلوب الكتاب البصري.",
+    stepTwo: "أرسل",
+    stepTwoText: "افتح محادثة Instagram برسالة طلب جاهزة.",
+    stepThree: "استلم",
+    stepThreeText: "أكد الدفع وطريقة التسليم داخل المحادثة.",
+    faqTitle: "أسئلة لها إجابات.",
+    faqOne: "هل A1.1 مناسب للمبتدئين؟",
+    faqOneText:
+      "نعم. يبدأ بالتعارف ويبني تدريجيًا لغة التواصل اليومية في التمريض.",
+    faqTwo: "ماذا أستلم؟",
+    faqTwoText:
+      "يتم تأكيد تفاصيل الكتاب وطريقة التسليم معك عبر Instagram قبل الدفع.",
+    faqThree: "هل الاختبارات شهادات؟",
+    faqThreeText: "لا. هي اختبارات تدريبية تساعدك على قياس تقدمك.",
+    feedbackTitle: "تقدمك يستحق رأيًا حقيقيًا.",
+    feedbackText:
+      "بعد إكمال الكتب سندعو الطلاب لمشاركة آرائهم بصدق. وحتى ذلك الوقت سيبقى هذا القسم فارغًا عن قصد.",
+    feedbackNote: "لن ننشر إلا الآراء الموثقة والموافق عليها.",
+    shareNotice: "تم فتح خيارات المشاركة",
+    shareFallback: "تم نسخ الرسالة وفتح Instagram",
+    chatTitle: "تعلّم مع abdelrazaq",
+    chatText:
+      "اسأل عن مستواك أو الكتاب أو جملة تمريضية تحتاجها في ورديتك القادمة.",
+    heroImageAlt: "رسمة ممرض يتعلم الألمانية",
+  },
 };
 
-const levelNotes: Record<Level, { number: string; name: Record<Locale, string>; note: Record<Locale, string>; tone: string }> = {
-  "A1/A2": { number: "01", name: { en: "Foundation", de: "Grundlage", ar: "الأساس" }, note: { en: "Greetings, introductions and essential care words.", de: "Begrüßungen, Vorstellungen und wichtige Pflegewörter.", ar: "التحيات والتعارف ومفردات الرعاية الأساسية." }, tone: "from-[#e8edcf] via-[#f7ecdc] to-[#f4ddc8]" },
-  "B1/B2": { number: "02", name: { en: "Confidence", de: "Sicherheit", ar: "الثقة" }, note: { en: "Professional routines, empathy and handovers.", de: "Berufsalltag, Empathie und Übergaben.", ar: "الروتين المهني والتعاطف وتسليم المناوبات." }, tone: "from-[#cbd9ae] via-[#e5eed6] to-[#d3e1c2]" },
-  "C1/C2": { number: "03", name: { en: "Precision", de: "Präzision", ar: "الدقة" }, note: { en: "Clinical language, documentation and nuance.", de: "Klinische Sprache, Dokumentation und Nuancen.", ar: "اللغة السريرية والتوثيق والفروق الدقيقة." }, tone: "from-[#80946f] via-[#aebd93] to-[#dbe4d3]" }
+const levelNotes: Record<
+  Level,
+  {
+    number: string;
+    name: Record<Locale, string>;
+    note: Record<Locale, string>;
+    tone: string;
+  }
+> = {
+  "A1/A2": {
+    number: "01",
+    name: { en: "Foundation", de: "Grundlage", ar: "الأساس" },
+    note: {
+      en: "Greetings, introductions and essential care words.",
+      de: "Begrüßungen, Vorstellungen und wichtige Pflegewörter.",
+      ar: "التحيات والتعارف ومفردات الرعاية الأساسية.",
+    },
+    tone: "from-[#e8edcf] via-[#f7ecdc] to-[#f4ddc8]",
+  },
+  "B1/B2": {
+    number: "02",
+    name: { en: "Confidence", de: "Sicherheit", ar: "الثقة" },
+    note: {
+      en: "Professional routines, empathy and handovers.",
+      de: "Berufsalltag, Empathie und Übergaben.",
+      ar: "الروتين المهني والتعاطف وتسليم المناوبات.",
+    },
+    tone: "from-[#cbd9ae] via-[#e5eed6] to-[#d3e1c2]",
+  },
+  "C1/C2": {
+    number: "03",
+    name: { en: "Precision", de: "Präzision", ar: "الدقة" },
+    note: {
+      en: "Clinical language, documentation and nuance.",
+      de: "Klinische Sprache, Dokumentation und Nuancen.",
+      ar: "اللغة السريرية والتوثيق والفروق الدقيقة.",
+    },
+    tone: "from-[#80946f] via-[#aebd93] to-[#dbe4d3]",
+  },
 };
 
-const shelves: Array<{ id: Shelf; parent: "A" | "B" | "C"; status: "available" | "soon"; note: Record<Locale, string> }> = [
-  { id: "A1.1", parent: "A", status: "available", note: { en: "The first practical workbook for nurses.", de: "Das erste praktische Arbeitsbuch für Pflegekräfte.", ar: "الكتاب العملي الأول لطلاب التمريض." } },
-  { id: "A1.2", parent: "A", status: "soon", note: { en: "The next foundation workbook is being prepared.", de: "Das nächste Grundlagenbuch wird vorbereitet.", ar: "يجري إعداد كتاب الأساس التالي." } },
-  { id: "B1.1", parent: "B", status: "soon", note: { en: "Professional care communication — coming soon.", de: "Professionelle Pflegekommunikation — bald verfügbar.", ar: "التواصل المهني في الرعاية — قريبًا." } },
-  { id: "B1.2", parent: "B", status: "soon", note: { en: "Confident ward routines and handovers — coming soon.", de: "Sichere Stationsroutinen und Übergaben — bald verfügbar.", ar: "روتين القسم وتسليم المناوبات — قريبًا." } },
-  { id: "C1.1", parent: "C", status: "soon", note: { en: "Clinical precision and documentation — coming soon.", de: "Klinische Präzision und Dokumentation — bald verfügbar.", ar: "الدقة السريرية والتوثيق — قريبًا." } },
-  { id: "C1.2", parent: "C", status: "soon", note: { en: "Advanced healthcare communication — coming soon.", de: "Fortgeschrittene Kommunikation im Gesundheitswesen — bald verfügbar.", ar: "التواصل المتقدم في الرعاية الصحية — قريبًا." } }
+const shelves: Array<{
+  id: Shelf;
+  parent: "A" | "B" | "C";
+  status: "available" | "soon";
+  note: Record<Locale, string>;
+}> = [
+  {
+    id: "A1.1",
+    parent: "A",
+    status: "available",
+    note: {
+      en: "The first practical workbook for nurses.",
+      de: "Das erste praktische Arbeitsbuch für Pflegekräfte.",
+      ar: "الكتاب العملي الأول لطلاب التمريض.",
+    },
+  },
+  {
+    id: "A1.2",
+    parent: "A",
+    status: "soon",
+    note: {
+      en: "The next foundation workbook is being prepared.",
+      de: "Das nächste Grundlagenbuch wird vorbereitet.",
+      ar: "يجري إعداد كتاب الأساس التالي.",
+    },
+  },
+  {
+    id: "B1.1",
+    parent: "B",
+    status: "soon",
+    note: {
+      en: "Professional care communication — coming soon.",
+      de: "Professionelle Pflegekommunikation — bald verfügbar.",
+      ar: "التواصل المهني في الرعاية — قريبًا.",
+    },
+  },
+  {
+    id: "B1.2",
+    parent: "B",
+    status: "soon",
+    note: {
+      en: "Confident ward routines and handovers — coming soon.",
+      de: "Sichere Stationsroutinen und Übergaben — bald verfügbar.",
+      ar: "روتين القسم وتسليم المناوبات — قريبًا.",
+    },
+  },
+  {
+    id: "C1.1",
+    parent: "C",
+    status: "soon",
+    note: {
+      en: "Clinical precision and documentation — coming soon.",
+      de: "Klinische Präzision und Dokumentation — bald verfügbar.",
+      ar: "الدقة السريرية والتوثيق — قريبًا.",
+    },
+  },
+  {
+    id: "C1.2",
+    parent: "C",
+    status: "soon",
+    note: {
+      en: "Advanced healthcare communication — coming soon.",
+      de: "Fortgeschrittene Kommunikation im Gesundheitswesen — bald verfügbar.",
+      ar: "التواصل المتقدم في الرعاية الصحية — قريبًا.",
+    },
+  },
 ];
 
 // These are public, stable image URLs so the storefront does not depend on the
 // private Manus workspace storage paths that are unavailable on Render.
-const heroCharacter = "/medical-sketcher-hero.jpg";
-const bookFallback = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=85";
-const lessonArt = "/medical-sketcher-method.jpg";
-const a11Book = { id: "a1-1-instagram-book", title: "German for Nurse A1.1", descriptions: { en: "A practical first step for nurses learning essential German communication in healthcare.", de: "Ein praktischer Einstieg für Pflegekräfte in die wichtige Kommunikation im Gesundheitswesen.", ar: "خطوتك العملية الأولى لتعلم التواصل الأساسي بالألمانية في مجال الرعاية الصحية." }, images: [{ url: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663893490517/QFCSGvpeAiQgscAr.jpg", altText: "German for Nurse A1.1 cover" }] };
+const heroCharacter = "/medical-sketcher-hero-new.png";
+const bookFallback =
+  "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=85";
+const lessonArt = "/medical-sketcher-method-new.png";
+const studyArt = "/medical-sketcher-study-new.png";
+const a11Book = {
+  id: "a1-1-instagram-book",
+  title: "German for Nurse A1.1",
+  descriptions: {
+    en: "A practical first step for nurses learning essential German communication in healthcare.",
+    de: "Ein praktischer Einstieg für Pflegekräfte in die wichtige Kommunikation im Gesundheitswesen.",
+    ar: "خطوتك العملية الأولى لتعلم التواصل الأساسي بالألمانية في مجال الرعاية الصحية.",
+  },
+  images: [
+    {
+      url: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663893490517/QFCSGvpeAiQgscAr.jpg",
+      altText: "German for Nurse A1.1 cover",
+    },
+  ],
+};
 const lessonFeedbackKeys = [
-  ["a1-1-lesson-1", "Lesson 1 — Sich vorstellen"], ["a1-1-lesson-2", "Lesson 2 — Beruf & Persönliches"], ["a1-1-lesson-3", "Lesson 3 — Familie & Sprachen"], ["a1-1-lesson-4", "Lesson 4 — Möbel & Preise"], ["a1-1-lesson-5", "Lesson 5 — Ein / Kein"], ["a1-1-lesson-6", "Lesson 6 — Telefon & Akkusativ"], ["a1-1-lesson-7", "Lesson 7 — Hobbys & können"], ["a1-1-lesson-8", "Lesson 8 — Termine & Uhrzeit"], ["a1-1-lesson-9", "Lesson 9 — Trennbare Verben"], ["a1-1-lesson-10", "Lesson 10 — Perfekt mit haben"], ["a1-1-lesson-11", "Lesson 11 — Perfekt mit sein"]
+  ["a1-1-lesson-1", "Lesson 1 — Sich vorstellen"],
+  ["a1-1-lesson-2", "Lesson 2 — Beruf & Persönliches"],
+  ["a1-1-lesson-3", "Lesson 3 — Familie & Sprachen"],
+  ["a1-1-lesson-4", "Lesson 4 — Möbel & Preise"],
+  ["a1-1-lesson-5", "Lesson 5 — Ein / Kein"],
+  ["a1-1-lesson-6", "Lesson 6 — Telefon & Akkusativ"],
+  ["a1-1-lesson-7", "Lesson 7 — Hobbys & können"],
+  ["a1-1-lesson-8", "Lesson 8 — Termine & Uhrzeit"],
+  ["a1-1-lesson-9", "Lesson 9 — Trennbare Verben"],
+  ["a1-1-lesson-10", "Lesson 10 — Perfekt mit haben"],
+  ["a1-1-lesson-11", "Lesson 11 — Perfekt mit sein"],
 ] as const;
 
-function LessonFeedbackPanel({ lessonKey, title, locale }: { lessonKey: string; title: string; locale: Locale }) {
+function LessonFeedbackPanel({
+  lessonKey,
+  title,
+  locale,
+}: {
+  lessonKey: string;
+  title: string;
+  locale: Locale;
+}) {
   const [authorName, setAuthorName] = useState("");
   const [body, setBody] = useState("");
   const [rating, setRating] = useState(0);
   const feedback = trpc.feedback.list.useQuery({ lessonKey });
-  const submit = trpc.feedback.submit.useMutation({ onSuccess: () => { setAuthorName(""); setBody(""); setRating(0); feedback.refetch(); } });
-  const labels = locale === "ar" ? { title: "شارك رأيك في الدرس", empty: "لا توجد تعليقات معتمدة بعد.", name: "اسمك", comment: "ما رأيك في هذا الدرس؟", submit: "أرسل للتدقيق", pending: "سيظهر تعليقك بعد المراجعة.", signIn: "يمكنك إرسال رأيك دون تسجيل الدخول." } : locale === "de" ? { title: "Deine Meinung zur Lektion", empty: "Noch keine freigegebenen Kommentare.", name: "Dein Name", comment: "Wie findest du diese Lektion?", submit: "Zur Prüfung senden", pending: "Dein Kommentar erscheint nach der Prüfung.", signIn: "Du kannst deine Meinung ohne Anmeldung senden." } : { title: "Share your lesson feedback", empty: "No approved comments yet.", name: "Your name", comment: "What did you think of this lesson?", submit: "Send for review", pending: "Your comment will appear after review.", signIn: "You can share feedback without signing in." };
-  return <div className="motion-lift mt-5 rounded-2xl border border-[#27412f]/10 bg-white/70 p-4 dark:border-[#c9d9c7]/15 dark:bg-[#24372d]/80"><div className="flex items-center justify-between gap-3"><div><p className="text-[10px] font-bold tracking-[.14em] text-[#89966d]">{title}</p><h4 className="mt-1 flex items-center gap-2 font-display text-lg font-bold"><MessageCircle className="size-4 text-[#b45b43]" />{labels.title}</h4></div><span className="rounded-full bg-[#eef1e4] px-2 py-1 text-[10px] text-[#64705c] dark:bg-[#314a3c] dark:text-[#d9e5d1]">{feedback.data?.length ?? 0}</span></div><div className="mt-4 space-y-2">{feedback.data?.map(item => <div key={item.id} className="rounded-xl bg-[#f8f5eb] p-3 dark:bg-[#1c2b23]"><div className="flex items-center justify-between gap-3"><strong className="text-sm">{item.authorName}</strong><span className="flex text-[#b45b43]" aria-label={`${item.rating} / 5`}>
-        {Array.from({ length: 5 }, (_, index) => <Star key={index} className={`size-3 ${index < item.rating ? "fill-current" : ""}`} />)}
-      </span></div><p className="mt-1 text-xs leading-5 text-[#687360] dark:text-[#c2d0bf]">{item.body}</p></div>)}</div>{!feedback.data?.length && <p className="mt-3 text-xs text-[#71806b] dark:text-[#b9c9b8]">{labels.empty}</p>}<form onSubmit={event => { event.preventDefault(); if (rating && authorName.trim() && body.trim()) submit.mutate({ lessonKey, authorName, rating, body }); }} className="mt-4 border-t border-[#27412f]/10 pt-4 dark:border-[#c9d9c7]/15"><p className="text-xs text-[#71806b] dark:text-[#b9c9b8]">{labels.signIn}</p><div className="mt-3 flex items-center gap-1" aria-label="Choose rating">{Array.from({ length: 5 }, (_, index) => <button key={index} type="button" onClick={() => setRating(index + 1)} aria-label={`${index + 1} stars`} className="rounded p-1 text-[#b45b43] transition hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#b45b43]"><Star className={`size-5 ${index < rating ? "fill-current" : ""}`} /></button>)}</div><input value={authorName} onChange={event => setAuthorName(event.target.value)} required maxLength={100} placeholder={labels.name} className="mt-3 w-full rounded-xl border border-[#27412f]/10 bg-[#fffdf7] px-3 py-2 text-sm outline-none focus:border-[#536d37] dark:border-[#c9d9c7]/15 dark:bg-[#1c2b23]" /><textarea value={body} onChange={event => setBody(event.target.value)} required maxLength={1000} placeholder={labels.comment} rows={2} className="mt-2 w-full resize-none rounded-xl border border-[#27412f]/10 bg-[#fffdf7] px-3 py-2 text-sm outline-none focus:border-[#536d37] dark:border-[#c9d9c7]/15 dark:bg-[#1c2b23]" /><button type="submit" disabled={submit.isPending || !rating} className="mt-3 rounded-full bg-[#27412f] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#416044] disabled:cursor-not-allowed disabled:opacity-50">{submit.isPending ? "…" : labels.submit}</button>{submit.isSuccess && <p className="mt-2 text-xs text-[#536d37] dark:text-[#c9d9b7]">{labels.pending}</p>}</form></div>;
+  const submit = trpc.feedback.submit.useMutation({
+    onSuccess: () => {
+      setAuthorName("");
+      setBody("");
+      setRating(0);
+      feedback.refetch();
+    },
+  });
+  const labels =
+    locale === "ar"
+      ? {
+          title: "شارك رأيك في الدرس",
+          empty: "لا توجد تعليقات معتمدة بعد.",
+          name: "اسمك",
+          comment: "ما رأيك في هذا الدرس؟",
+          submit: "أرسل للتدقيق",
+          pending: "سيظهر تعليقك بعد المراجعة.",
+          signIn: "يمكنك إرسال رأيك دون تسجيل الدخول.",
+        }
+      : locale === "de"
+        ? {
+            title: "Deine Meinung zur Lektion",
+            empty: "Noch keine freigegebenen Kommentare.",
+            name: "Dein Name",
+            comment: "Wie findest du diese Lektion?",
+            submit: "Zur Prüfung senden",
+            pending: "Dein Kommentar erscheint nach der Prüfung.",
+            signIn: "Du kannst deine Meinung ohne Anmeldung senden.",
+          }
+        : {
+            title: "Share your lesson feedback",
+            empty: "No approved comments yet.",
+            name: "Your name",
+            comment: "What did you think of this lesson?",
+            submit: "Send for review",
+            pending: "Your comment will appear after review.",
+            signIn: "You can share feedback without signing in.",
+          };
+  return (
+    <div className="motion-lift mt-5 rounded-2xl border border-[#10283f]/10 bg-white/70 p-4 dark:border-[#c9d9c7]/15 dark:bg-[#24372d]/80">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-bold tracking-[.14em] text-[#16849a]">
+            {title}
+          </p>
+          <h4 className="mt-1 flex items-center gap-2 font-display text-lg font-bold">
+            <MessageCircle className="size-4 text-[#e07a5f]" />
+            {labels.title}
+          </h4>
+        </div>
+        <span className="rounded-full bg-[#eaf4f6] px-2 py-1 text-[10px] text-[#64705c] dark:bg-[#314a3c] dark:text-[#d9e5d1]">
+          {feedback.data?.length ?? 0}
+        </span>
+      </div>
+      <div className="mt-4 space-y-2">
+        {feedback.data?.map(item => (
+          <div
+            key={item.id}
+            className="rounded-xl bg-[#f4f8fa] p-3 dark:bg-[#1c2b23]"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <strong className="text-sm">{item.authorName}</strong>
+              <span
+                className="flex text-[#e07a5f]"
+                aria-label={`${item.rating} / 5`}
+              >
+                {Array.from({ length: 5 }, (_, index) => (
+                  <Star
+                    key={index}
+                    className={`size-3 ${index < item.rating ? "fill-current" : ""}`}
+                  />
+                ))}
+              </span>
+            </div>
+            <p className="mt-1 text-xs leading-5 text-[#607487] dark:text-[#c2d0bf]">
+              {item.body}
+            </p>
+          </div>
+        ))}
+      </div>
+      {!feedback.data?.length && (
+        <p className="mt-3 text-xs text-[#71806b] dark:text-[#b9c9b8]">
+          {labels.empty}
+        </p>
+      )}
+      <form
+        onSubmit={event => {
+          event.preventDefault();
+          if (rating && authorName.trim() && body.trim())
+            submit.mutate({ lessonKey, authorName, rating, body });
+        }}
+        className="mt-4 border-t border-[#10283f]/10 pt-4 dark:border-[#c9d9c7]/15"
+      >
+        <p className="text-xs text-[#71806b] dark:text-[#b9c9b8]">
+          {labels.signIn}
+        </p>
+        <div
+          className="mt-3 flex items-center gap-1"
+          aria-label="Choose rating"
+        >
+          {Array.from({ length: 5 }, (_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => setRating(index + 1)}
+              aria-label={`${index + 1} stars`}
+              className="rounded p-1 text-[#e07a5f] transition hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e07a5f]"
+            >
+              <Star
+                className={`size-5 ${index < rating ? "fill-current" : ""}`}
+              />
+            </button>
+          ))}
+        </div>
+        <input
+          value={authorName}
+          onChange={event => setAuthorName(event.target.value)}
+          required
+          maxLength={100}
+          placeholder={labels.name}
+          className="mt-3 w-full rounded-xl border border-[#10283f]/10 bg-[#ffffff] px-3 py-2 text-sm outline-none focus:border-[#16849a] dark:border-[#c9d9c7]/15 dark:bg-[#1c2b23]"
+        />
+        <textarea
+          value={body}
+          onChange={event => setBody(event.target.value)}
+          required
+          maxLength={1000}
+          placeholder={labels.comment}
+          rows={2}
+          className="mt-2 w-full resize-none rounded-xl border border-[#10283f]/10 bg-[#ffffff] px-3 py-2 text-sm outline-none focus:border-[#16849a] dark:border-[#c9d9c7]/15 dark:bg-[#1c2b23]"
+        />
+        <button
+          type="submit"
+          disabled={submit.isPending || !rating}
+          className="mt-3 rounded-full bg-[#10283f] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#176b7d] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {submit.isPending ? "…" : labels.submit}
+        </button>
+        {submit.isSuccess && (
+          <p className="mt-2 text-xs text-[#16849a] dark:text-[#c9d9b7]">
+            {labels.pending}
+          </p>
+        )}
+      </form>
+    </div>
+  );
 }
 
-function ProductCard({ product, label, locale, onPreview, onShare }: { product: typeof a11Book; label: string; locale: Locale; onPreview: () => void; onShare: () => void }) {
-  const checkout = trpc.digitalProducts.demoCheckout.useMutation({ onSuccess: data => { if (data.approvalUrl) window.location.href = data.approvalUrl; else toast.error("PayPal did not return a checkout link"); }, onError: error => toast.error(error.message) });
-  return <article data-reveal="card" className="group motion-reveal motion-lift overflow-hidden rounded-[2rem] border border-[#27412f]/10 bg-[#fffdf7] p-4 shadow-[0_18px_50px_rgba(32,50,35,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(32,50,35,.14)]">
-    <button type="button" onClick={onPreview} className="block w-full text-start" aria-label="Preview German for Nurse A1.1"><div className="relative aspect-[.76] overflow-hidden rounded-[1.5rem] bg-[#e5e9d9]"><img className="h-full w-full object-cover transition duration-500 group-hover:scale-105" src={product.images[0]?.url ?? bookFallback} alt={product.images[0]?.altText ?? product.title} /><span className="absolute start-3 top-3 rounded-full bg-[#27412f] px-3 py-1 text-[10px] font-bold tracking-[.14em] text-white">A1.1</span><span className="absolute bottom-3 end-3 rounded-full bg-[#b45b43] px-3 py-1 text-[10px] font-bold tracking-[.1em] text-white">5 JD</span></div><div className="px-1 pt-5"><h3 className="font-display text-2xl font-bold leading-tight">{product.title}</h3><p className="mt-2 line-clamp-2 min-h-10 text-sm leading-6 text-[#687360]">{product.descriptions[locale]}</p></div></button>
-    <div className="mt-4 rounded-2xl bg-[#eff2e8] p-3"><div className="flex items-center gap-2 text-xs font-semibold text-[#536d37]"><ShieldCheck className="size-4" />{text[locale].reviews}</div><p className="mt-1 text-xs leading-5 text-[#71806b]">{text[locale].reviewsEmpty}</p></div>
-    <div className="mt-4 flex items-center justify-between gap-3"><button type="button" onClick={onPreview} className="text-xs font-semibold text-[#536d37] underline underline-offset-4">{text[locale].preview}</button><button type="button" onClick={onShare} className="inline-flex items-center gap-1 text-xs font-semibold text-[#536d37] hover:text-[#27412f]"><Send className="size-3" />{text[locale].share}</button></div>
-    <div className="mt-4 grid gap-2"><a href="https://ig.me/m/medical.sketcher" target="_blank" rel="noreferrer" aria-label="Order German for Nurse A1.1 through Instagram Direct" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#27412f] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#416044]">{label}<ArrowUpRight className="size-4" /></a><button type="button" disabled={checkout.isPending} onClick={() => checkout.mutate()} aria-label="Pay with PayPal for German for Nurse A1.1" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#0070ba] bg-white px-4 py-3 text-sm font-semibold text-[#0070ba] transition hover:bg-[#eef7fc] disabled:opacity-60">{checkout.isPending ? "Opening PayPal…" : "Pay with PayPal · approx. $7 USD (5 JOD)"}<ArrowUpRight className="size-4" /></button></div>
-  </article>;
+function ProductCard({
+  product,
+  label,
+  locale,
+  onPreview,
+  onShare,
+}: {
+  product: typeof a11Book;
+  label: string;
+  locale: Locale;
+  onPreview: () => void;
+  onShare: () => void;
+}) {
+  const checkout = trpc.digitalProducts.demoCheckout.useMutation({
+    onSuccess: data => {
+      if (data.approvalUrl) window.location.href = data.approvalUrl;
+      else toast.error("PayPal did not return a checkout link");
+    },
+    onError: error => toast.error(error.message),
+  });
+  return (
+    <article
+      data-reveal="card"
+      className="group motion-reveal motion-lift overflow-hidden rounded-[2rem] border border-[#10283f]/10 bg-[#ffffff] p-4 shadow-[0_18px_50px_rgba(32,50,35,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(32,50,35,.14)]"
+    >
+      <button
+        type="button"
+        onClick={onPreview}
+        className="block w-full text-start"
+        aria-label="Preview German for Nurse A1.1"
+      >
+        <div className="relative aspect-[.76] overflow-hidden rounded-[1.5rem] bg-[#e5e9d9]">
+          <img
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            src={product.images[0]?.url ?? bookFallback}
+            alt={product.images[0]?.altText ?? product.title}
+          />
+          <span className="absolute start-3 top-3 rounded-full bg-[#10283f] px-3 py-1 text-[10px] font-bold tracking-[.14em] text-white">
+            A1.1
+          </span>
+          <span className="absolute bottom-3 end-3 rounded-full bg-[#e07a5f] px-3 py-1 text-[10px] font-bold tracking-[.1em] text-white">
+            5 JD
+          </span>
+        </div>
+        <div className="px-1 pt-5">
+          <h3 className="font-display text-2xl font-bold leading-tight">
+            {product.title}
+          </h3>
+          <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-6 text-[#607487]">
+            {product.descriptions[locale]}
+          </p>
+        </div>
+      </button>
+      <div className="mt-4 rounded-2xl bg-[#eff2e8] p-3">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#16849a]">
+          <ShieldCheck className="size-4" />
+          {text[locale].reviews}
+        </div>
+        <p className="mt-1 text-xs leading-5 text-[#71806b]">
+          {text[locale].reviewsEmpty}
+        </p>
+      </div>
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onPreview}
+          className="text-xs font-semibold text-[#16849a] underline underline-offset-4"
+        >
+          {text[locale].preview}
+        </button>
+        <button
+          type="button"
+          onClick={onShare}
+          className="inline-flex items-center gap-1 text-xs font-semibold text-[#16849a] hover:text-[#10283f]"
+        >
+          <Send className="size-3" />
+          {text[locale].share}
+        </button>
+      </div>
+      <div className="mt-4 grid gap-2">
+        <a
+          href="https://ig.me/m/medical.sketcher"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Order German for Nurse A1.1 through Instagram Direct"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#10283f] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#176b7d]"
+        >
+          {label}
+          <ArrowUpRight className="size-4" />
+        </a>
+        <button
+          type="button"
+          disabled={checkout.isPending}
+          onClick={() => checkout.mutate()}
+          aria-label="Pay with PayPal for German for Nurse A1.1"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#0070ba] bg-white px-4 py-3 text-sm font-semibold text-[#0070ba] transition hover:bg-[#eef7fc] disabled:opacity-60"
+        >
+          {checkout.isPending
+            ? "Opening PayPal…"
+            : "Pay with PayPal · approx. $7 USD (5 JOD)"}
+          <ArrowUpRight className="size-4" />
+        </button>
+      </div>
+    </article>
+  );
 }
 
-function EmptyBook({ level, label, note }: { level: Shelf; label: string; note: string }) {
-  return <article data-reveal="card" className="relative motion-reveal motion-lift min-h-[245px] overflow-hidden rounded-[2rem] border border-dashed border-[#536d37]/30 bg-[#eff2e8] p-6"><div className="absolute -end-8 -top-8 size-36 rounded-full bg-[#d4e0b9]" /><BookOpen className="relative size-8 text-[#536d37]" /><p className="relative mt-12 text-xs font-bold tracking-[.16em] text-[#536d37]">{level}</p><h3 className="relative mt-2 font-display text-2xl font-bold">{label}</h3><p className="relative mt-3 max-w-[17rem] text-sm leading-6 text-[#68735e]">{note}</p></article>;
+function EmptyBook({
+  level,
+  label,
+  note,
+}: {
+  level: Shelf;
+  label: string;
+  note: string;
+}) {
+  return (
+    <article
+      data-reveal="card"
+      className="relative motion-reveal motion-lift min-h-[245px] overflow-hidden rounded-[2rem] border border-dashed border-[#16849a]/30 bg-[#eff2e8] p-6"
+    >
+      <div className="absolute -end-8 -top-8 size-36 rounded-full bg-[#d4e0b9]" />
+      <BookOpen className="relative size-8 text-[#16849a]" />
+      <p className="relative mt-12 text-xs font-bold tracking-[.16em] text-[#16849a]">
+        {level}
+      </p>
+      <h3 className="relative mt-2 font-display text-2xl font-bold">{label}</h3>
+      <p className="relative mt-3 max-w-[17rem] text-sm leading-6 text-[#68735e]">
+        {note}
+      </p>
+    </article>
+  );
 }
 
 export default function Home() {
@@ -86,47 +764,1049 @@ export default function Home() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResult, setShowResult] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "a11");
+  const [previewOpen, setPreviewOpen] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("preview") === "a11"
+  );
   const [shareNotice, setShareNotice] = useState("");
-  const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([{ role: "assistant", content: text.en.assistantIntro }]);
+  const [messages, setMessages] = useState<
+    Array<{ role: "user" | "assistant"; content: string }>
+  >([{ role: "assistant", content: text.en.assistantIntro }]);
   const { theme, toggleTheme } = useTheme();
   const t = text[locale];
   const quiz = trpc.learning.questions.list.useQuery({ level });
   const assistantProfile = trpc.studio.assistant.profile.useQuery();
   const assistantName = assistantProfile.data?.name ?? "abdelrazaq";
-  const chat = trpc.assistant.chat.useMutation({ onSuccess: output => setMessages(current => [...current, { role: "assistant", content: output.response }]), onError: () => setMessages(current => [...current, { role: "assistant", content: "Please try again in a moment." }]) });
+  const chat = trpc.assistant.chat.useMutation({
+    onSuccess: output =>
+      setMessages(current => [
+        ...current,
+        { role: "assistant", content: output.response },
+      ]),
+    onError: () =>
+      setMessages(current => [
+        ...current,
+        { role: "assistant", content: "Please try again in a moment." },
+      ]),
+  });
   const questions = quiz.data ?? [];
-  const score = questions.reduce((total, question) => total + (answers[question.id] === question.correctIndex ? 1 : 0), 0);
+  const score = questions.reduce(
+    (total, question) =>
+      total + (answers[question.id] === question.correctIndex ? 1 : 0),
+    0
+  );
 
-  useEffect(() => { document.documentElement.lang = locale; document.documentElement.dir = locale === "ar" ? "rtl" : "ltr"; setMessages([{ role: "assistant", content: assistantProfile.data?.greeting ?? t.assistantIntro }]); }, [locale, assistantProfile.data?.greeting, t.assistantIntro]);
-  useEffect(() => { const targets = Array.from(document.querySelectorAll<HTMLElement>(".motion-reveal")); if (!("IntersectionObserver" in window)) { targets.forEach(target => target.classList.add("is-visible")); return; } const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add("is-visible"); observer.unobserve(entry.target); } }); }, { threshold: 0.12, rootMargin: "0px 0px -36px" }); targets.forEach(target => observer.observe(target)); return () => observer.disconnect(); }, []);
-  const chooseLevel = (next: Level) => { setLevel(next); setAnswers({}); setShowResult(false); document.querySelector("#tests")?.scrollIntoView({ behavior: "smooth" }); };
-  const shareA11Book = async () => { const message = "German for Nurse A1.1 — practical German for nurses. Order via @medical.sketcher — 5 JD."; if (navigator.share) { try { await navigator.share({ title: "German for Nurse A1.1", text: message, url: window.location.href }); setShareNotice(t.shareNotice); return; } catch (error) { if (error instanceof DOMException && error.name === "AbortError") return; } } try { await navigator.clipboard?.writeText(message); } catch { /* Clipboard can be unavailable. */ } window.open("https://ig.me/m/medical.sketcher", "_blank", "noopener,noreferrer"); setShareNotice(t.shareFallback); };
-  const send = (content: string) => { const next = [...messages, { role: "user" as const, content }]; setMessages(next); chat.mutate({ messages: next }); };
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+    setMessages([
+      {
+        role: "assistant",
+        content: assistantProfile.data?.greeting ?? t.assistantIntro,
+      },
+    ]);
+  }, [locale, assistantProfile.data?.greeting, t.assistantIntro]);
+  useEffect(() => {
+    const targets = Array.from(
+      document.querySelectorAll<HTMLElement>(".motion-reveal")
+    );
+    if (!("IntersectionObserver" in window)) {
+      targets.forEach(target => target.classList.add("is-visible"));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -36px" }
+    );
+    targets.forEach(target => observer.observe(target));
+    return () => observer.disconnect();
+  }, []);
+  const chooseLevel = (next: Level) => {
+    setLevel(next);
+    setAnswers({});
+    setShowResult(false);
+    document.querySelector("#tests")?.scrollIntoView({ behavior: "smooth" });
+  };
+  const shareA11Book = async () => {
+    const message =
+      "German for Nurse A1.1 — practical German for nurses. Order via @medical.sketcher — 5 JD.";
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "German for Nurse A1.1",
+          text: message,
+          url: window.location.href,
+        });
+        setShareNotice(t.shareNotice);
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError")
+          return;
+      }
+    }
+    try {
+      await navigator.clipboard?.writeText(message);
+    } catch {
+      /* Clipboard can be unavailable. */
+    }
+    window.open(
+      "https://ig.me/m/medical.sketcher",
+      "_blank",
+      "noopener,noreferrer"
+    );
+    setShareNotice(t.shareFallback);
+  };
+  const send = (content: string) => {
+    const next = [...messages, { role: "user" as const, content }];
+    setMessages(next);
+    chat.mutate({ messages: next });
+  };
 
-  return <main className="min-h-screen overflow-hidden bg-[#f8f5eb] text-[#1d2a1d]">
-    <div className="border-b border-[#dce4d1] bg-[#27412f] px-5 py-2.5 text-center text-[11px] font-semibold tracking-[.08em] text-[#e8eedb]">{t.available}<span className="mx-2 text-[#a9be82]">•</span>German for Nurse A1.1<span className="mx-2 text-[#a9be82]">•</span>@medical.sketcher</div>
-    <nav className="sticky top-0 z-50 border-b border-[#27412f]/10 bg-[#f8f5eb]/90 backdrop-blur-xl"><div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8"><a href="#home" className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-[.9rem] bg-[#27412f] font-display text-xl font-black text-[#e5ebce] shadow-sm">M</span><span><strong className="font-display text-xl tracking-tight">medical.sketcher</strong><small className="block text-[9px] font-bold tracking-[.16em] text-[#6a765d]">GERMAN FOR NURSES</small></span></a><div className="hidden items-center gap-7 text-sm font-semibold md:flex"><a href="#books" className="transition hover:text-[#a5523c]">{t.books}</a><a href="#tests" className="transition hover:text-[#a5523c]">{t.tests}</a><a href="#method" className="transition hover:text-[#a5523c]">{t.method}</a><Link href="/admin" className="rounded-full border border-[#27412f]/15 px-4 py-2 transition hover:border-[#27412f]/40">{t.owner}</Link></div><div className="flex items-center gap-2"><button type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} aria-pressed={theme === "dark"} className="grid size-9 place-items-center rounded-full border border-[#27412f]/15 bg-white text-[#536d37] transition hover:-translate-y-0.5 hover:shadow-md dark:border-[#c9d9c7]/20 dark:bg-[#24372d] dark:text-[#d9e5d1]">{theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}</button><div className="hidden rounded-full border border-[#27412f]/15 bg-white p-1 sm:flex">{(["en", "de", "ar"] as Locale[]).map(item => <button key={item} onClick={() => setLocale(item)} className={`rounded-full px-2.5 py-1 text-xs font-bold uppercase transition ${locale === item ? "bg-[#27412f] text-white" : "text-[#6a765d] hover:bg-[#eef1e4]"}`}>{item}</button>)}</div><Button size="icon" variant="ghost" className="md:hidden" onClick={() => setMobileMenu(value => !value)} aria-label="Toggle menu">{mobileMenu ? <X /> : <Menu />}</Button></div></div>{mobileMenu && <div className="border-t border-[#27412f]/10 bg-white px-5 py-5 md:hidden"><div className="grid gap-4 text-sm font-semibold"><a href="#books" onClick={() => setMobileMenu(false)}>{t.books}</a><a href="#tests" onClick={() => setMobileMenu(false)}>{t.tests}</a><a href="#method" onClick={() => setMobileMenu(false)}>{t.method}</a><Link href="/admin">{t.owner}</Link><div className="flex gap-2 pt-1">{(["en", "de", "ar"] as Locale[]).map(item => <button key={item} onClick={() => setLocale(item)} className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${locale === item ? "bg-[#27412f] text-white" : "bg-[#eef1e4]"}`}>{item}</button>)}</div></div></div>}</nav>
+  return (
+    <main className="min-h-screen overflow-hidden bg-[#f4f8fa] text-[#1d2a1d]">
+      <div className="border-b border-[#dce4d1] bg-[#10283f] px-5 py-2.5 text-center text-[11px] font-semibold tracking-[.08em] text-[#e8eedb]">
+        {t.available}
+        <span className="mx-2 text-[#a9be82]">•</span>German for Nurse A1.1
+        <span className="mx-2 text-[#a9be82]">•</span>@medical.sketcher
+      </div>
+      <nav className="sticky top-0 z-50 border-b border-[#10283f]/10 bg-[#f4f8fa]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+          <a href="#home" className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-[.9rem] bg-[#10283f] font-display text-xl font-black text-[#e5ebce] shadow-sm">
+              M
+            </span>
+            <span>
+              <strong className="font-display text-xl tracking-tight">
+                medical.sketcher
+              </strong>
+              <small className="block text-[9px] font-bold tracking-[.16em] text-[#6a765d]">
+                GERMAN FOR NURSES
+              </small>
+            </span>
+          </a>
+          <div className="hidden items-center gap-7 text-sm font-semibold md:flex">
+            <a href="#books" className="transition hover:text-[#16849a]">
+              {t.books}
+            </a>
+            <a href="#tests" className="transition hover:text-[#16849a]">
+              {t.tests}
+            </a>
+            <a href="#method" className="transition hover:text-[#16849a]">
+              {t.method}
+            </a>
+            <Link
+              href="/admin"
+              className="rounded-full border border-[#10283f]/15 px-4 py-2 transition hover:border-[#10283f]/40"
+            >
+              {t.owner}
+            </Link>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => toggleTheme?.()}
+              aria-label={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              aria-pressed={theme === "dark"}
+              className="grid size-9 place-items-center rounded-full border border-[#10283f]/15 bg-white text-[#16849a] transition hover:-translate-y-0.5 hover:shadow-md dark:border-[#c9d9c7]/20 dark:bg-[#24372d] dark:text-[#d9e5d1]"
+            >
+              {theme === "dark" ? (
+                <Sun className="size-4" />
+              ) : (
+                <Moon className="size-4" />
+              )}
+            </button>
+            <div className="hidden rounded-full border border-[#10283f]/15 bg-white p-1 sm:flex">
+              {(["en", "de", "ar"] as Locale[]).map(item => (
+                <button
+                  key={item}
+                  onClick={() => setLocale(item)}
+                  className={`rounded-full px-2.5 py-1 text-xs font-bold uppercase transition ${locale === item ? "bg-[#10283f] text-white" : "text-[#6a765d] hover:bg-[#eaf4f6]"}`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="md:hidden"
+              onClick={() => setMobileMenu(value => !value)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenu ? <X /> : <Menu />}
+            </Button>
+          </div>
+        </div>
+        {mobileMenu && (
+          <div className="border-t border-[#10283f]/10 bg-white px-5 py-5 md:hidden">
+            <div className="grid gap-4 text-sm font-semibold">
+              <a href="#books" onClick={() => setMobileMenu(false)}>
+                {t.books}
+              </a>
+              <a href="#tests" onClick={() => setMobileMenu(false)}>
+                {t.tests}
+              </a>
+              <a href="#method" onClick={() => setMobileMenu(false)}>
+                {t.method}
+              </a>
+              <Link href="/admin">{t.owner}</Link>
+              <div className="flex gap-2 pt-1">
+                {(["en", "de", "ar"] as Locale[]).map(item => (
+                  <button
+                    key={item}
+                    onClick={() => setLocale(item)}
+                    className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${locale === item ? "bg-[#10283f] text-white" : "bg-[#eaf4f6]"}`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
 
-    <section id="home" className="motion-reveal relative isolate overflow-hidden" data-reveal="hero"><div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_75%_22%,#dce6c7_0,transparent_30%),radial-gradient(circle_at_8%_75%,#eddfc3_0,transparent_28%)]" /><div className="absolute -end-20 top-24 -z-10 size-80 rounded-full border-[28px] border-[#dce6c7]/45" /><div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-28 pt-16 lg:grid-cols-[1.03fr_.97fr] lg:px-8 lg:pb-36 lg:pt-24"><div><div className="inline-flex items-center gap-2 rounded-full border border-[#536d37]/25 bg-white/75 px-4 py-2 text-[10px] font-bold tracking-[.18em] text-[#536d37]"><span className="size-2 rounded-full bg-[#b45b43]" />{t.heroTag}</div><h1 className="mt-7 max-w-2xl font-display text-5xl font-black leading-[.9] tracking-[-.06em] sm:text-6xl lg:text-[5.7rem]">{t.hero}</h1><p className="mt-7 max-w-xl text-base leading-8 text-[#586453]">{t.intro}</p><div className="mt-9 flex flex-wrap gap-3"><Button onClick={() => document.querySelector("#levels")?.scrollIntoView({ behavior: "smooth" })} className="rounded-full bg-[#27412f] px-6 py-6 text-sm shadow-[0_10px_25px_rgba(39,65,47,.2)] hover:bg-[#416044]">{t.explore}<ArrowDown className="size-4" /></Button><Button onClick={() => chooseLevel("A1/A2")} variant="outline" className="rounded-full border-[#27412f]/20 bg-white/60 px-6 py-6 text-sm">{t.check}<ArrowRight className="size-4" /></Button></div><div className="mt-12 flex flex-wrap items-center gap-5"><div className="flex -space-x-3"><span className="grid size-11 place-items-center rounded-full border-2 border-[#f8f5eb] bg-[#dfe6c6] text-xs font-bold">A1</span><span className="grid size-11 place-items-center rounded-full border-2 border-[#f8f5eb] bg-[#bfce9e] text-xs font-bold">B1</span><span className="grid size-11 place-items-center rounded-full border-2 border-[#f8f5eb] bg-[#849872] text-xs font-bold text-white">C1</span></div><p className="text-xs font-bold tracking-[.15em] text-[#64705c]">{t.learnLine}</p></div></div><div className="relative mx-auto w-full max-w-lg"><div className="absolute -inset-10 rounded-[4rem] bg-[#dbe5c5]/70 blur-3xl" /><div className="relative mx-auto aspect-[.85] max-w-[380px] rounded-[2.8rem] border border-white/80 bg-[#eff0e5] p-5 shadow-[0_38px_85px_rgba(36,52,30,.24)] [transform:rotate(4deg)]"><div className="absolute -start-8 top-20 z-20 rounded-2xl bg-[#fffdf7] px-5 py-4 shadow-xl [transform:rotate(-8deg)]"><span className="block text-[10px] font-bold tracking-[.14em] text-[#849872]">01 · DIALOGUE</span><span className="font-display text-xl font-bold">Guten Morgen.</span></div><img src={heroCharacter} alt={t.heroImageAlt} className="h-full w-full object-contain object-bottom [filter:drop-shadow(15px_22px_17px_rgba(35,54,30,.2))]" /><div className="absolute -bottom-7 -end-7 grid size-28 place-items-center rounded-full border-8 border-[#f8f5eb] bg-[#b45b43] text-center font-display text-xl font-black leading-none text-white shadow-xl">3D<br /><span className="text-[9px] tracking-[.16em]">LEARN</span></div></div><div className="absolute -bottom-8 -start-2 rounded-2xl border border-white/70 bg-white/85 px-4 py-3 shadow-lg backdrop-blur"><div className="flex items-center gap-2 text-xs font-bold text-[#27412f]"><CheckCircle2 className="size-4 text-[#849872]" />Visual + practical</div></div></div></div></section>
+      <section
+        id="home"
+        className="motion-reveal relative isolate overflow-hidden"
+        data-reveal="hero"
+      >
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_75%_22%,#dce6c7_0,transparent_30%),radial-gradient(circle_at_8%_75%,#eddfc3_0,transparent_28%)]" />
+        <div className="absolute -end-20 top-24 -z-10 size-80 rounded-full border-[28px] border-[#dce6c7]/45" />
+        <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-28 pt-16 lg:grid-cols-[1.03fr_.97fr] lg:px-8 lg:pb-36 lg:pt-24">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#16849a]/25 bg-white/75 px-4 py-2 text-[10px] font-bold tracking-[.18em] text-[#16849a]">
+              <span className="size-2 rounded-full bg-[#e07a5f]" />
+              {t.heroTag}
+            </div>
+            <h1 className="mt-7 max-w-2xl font-display text-5xl font-black leading-[.9] tracking-[-.06em] sm:text-6xl lg:text-[5.7rem]">
+              {t.hero}
+            </h1>
+            <p className="mt-7 max-w-xl text-base leading-8 text-[#586453]">
+              {t.intro}
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Button
+                onClick={() =>
+                  document
+                    .querySelector("#levels")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+                className="rounded-full bg-[#10283f] px-6 py-6 text-sm shadow-[0_10px_25px_rgba(39,65,47,.2)] hover:bg-[#176b7d]"
+              >
+                {t.explore}
+                <ArrowDown className="size-4" />
+              </Button>
+              <Button
+                onClick={() => chooseLevel("A1/A2")}
+                variant="outline"
+                className="rounded-full border-[#10283f]/20 bg-white/60 px-6 py-6 text-sm"
+              >
+                {t.check}
+                <ArrowRight className="size-4" />
+              </Button>
+            </div>
+            <div className="mt-12 flex flex-wrap items-center gap-5">
+              <div className="flex -space-x-3">
+                <span className="grid size-11 place-items-center rounded-full border-2 border-[#f4f8fa] bg-[#dfe6c6] text-xs font-bold">
+                  A1
+                </span>
+                <span className="grid size-11 place-items-center rounded-full border-2 border-[#f4f8fa] bg-[#bfce9e] text-xs font-bold">
+                  B1
+                </span>
+                <span className="grid size-11 place-items-center rounded-full border-2 border-[#f4f8fa] bg-[#849872] text-xs font-bold text-white">
+                  C1
+                </span>
+              </div>
+              <p className="text-xs font-bold tracking-[.15em] text-[#64705c]">
+                {t.learnLine}
+              </p>
+            </div>
+          </div>
+          <div className="relative mx-auto w-full max-w-lg">
+            <div className="absolute -inset-10 rounded-[4rem] bg-[#dbe5c5]/70 blur-3xl" />
+            <div className="relative mx-auto aspect-[.85] max-w-[380px] rounded-[2.8rem] border border-white/80 bg-[#eff0e5] p-5 shadow-[0_38px_85px_rgba(36,52,30,.24)] [transform:rotate(4deg)]">
+              <div className="absolute -start-8 top-20 z-20 rounded-2xl bg-[#ffffff] px-5 py-4 shadow-xl [transform:rotate(-8deg)]">
+                <span className="block text-[10px] font-bold tracking-[.14em] text-[#849872]">
+                  01 · DIALOGUE
+                </span>
+                <span className="font-display text-xl font-bold">
+                  Guten Morgen.
+                </span>
+              </div>
+              <img
+                src={heroCharacter}
+                alt={t.heroImageAlt}
+                className="h-full w-full object-contain object-bottom [filter:drop-shadow(15px_22px_17px_rgba(35,54,30,.2))]"
+              />
+              <div className="absolute -bottom-7 -end-7 grid size-28 place-items-center rounded-full border-8 border-[#f4f8fa] bg-[#e07a5f] text-center font-display text-xl font-black leading-none text-white shadow-xl">
+                3D
+                <br />
+                <span className="text-[9px] tracking-[.16em]">LEARN</span>
+              </div>
+            </div>
+            <div className="absolute -bottom-8 -start-2 rounded-2xl border border-white/70 bg-white/85 px-4 py-3 shadow-lg backdrop-blur">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#10283f]">
+                <CheckCircle2 className="size-4 text-[#849872]" />
+                Visual + practical
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="levels" className="motion-reveal bg-[#27412f] py-20 text-[#f8f5eb]" data-reveal="section"><div className="mx-auto max-w-7xl px-5 lg:px-8"><div className="grid gap-7 md:grid-cols-[.8fr_1.2fr]"><div><p className="text-xs font-bold tracking-[.18em] text-[#c8d5a9]">01 — PATHWAY</p><h2 className="mt-4 max-w-md font-display text-4xl font-bold leading-tight sm:text-5xl">{t.pathway}</h2></div><p className="max-w-xl self-end text-base leading-8 text-[#dfe8d8]">{t.pathwayText}</p></div><div className="mt-12 grid gap-5 md:grid-cols-3">{(Object.keys(levelNotes) as Level[]).map(item => { const note = levelNotes[item]; return <button key={item} onClick={() => chooseLevel(item)} className={`group motion-reveal motion-lift relative overflow-hidden rounded-[2rem] bg-gradient-to-br ${note.tone} p-6 text-start text-[#23301f] shadow-[0_20px_45px_rgba(0,0,0,.13)] transition duration-300 hover:-translate-y-1`}><span className="font-display text-6xl font-black opacity-20">{note.number}</span><p className="mt-8 text-xs font-bold tracking-[.16em]">{item}</p><h3 className="mt-2 font-display text-3xl font-bold">{note.name[locale]}</h3><p className="mt-3 min-h-12 text-sm leading-6 text-[#53604a]">{note.note[locale]}</p><span className="mt-6 inline-flex items-center gap-2 text-sm font-bold">{t.start}<ArrowUpRight className="size-4 transition group-hover:translate-x-1" /></span><span className="absolute -bottom-10 -end-1 text-[9rem] font-black leading-none text-white/20">+</span></button>; })}</div></div></section>
+      <section
+        id="levels"
+        className="motion-reveal bg-[#10283f] py-20 text-[#f4f8fa]"
+        data-reveal="section"
+      >
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="grid gap-7 md:grid-cols-[.8fr_1.2fr]">
+            <div>
+              <p className="text-xs font-bold tracking-[.18em] text-[#c8d5a9]">
+                01 — PATHWAY
+              </p>
+              <h2 className="mt-4 max-w-md font-display text-4xl font-bold leading-tight sm:text-5xl">
+                {t.pathway}
+              </h2>
+            </div>
+            <p className="max-w-xl self-end text-base leading-8 text-[#dfe8d8]">
+              {t.pathwayText}
+            </p>
+          </div>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {(Object.keys(levelNotes) as Level[]).map(item => {
+              const note = levelNotes[item];
+              return (
+                <button
+                  key={item}
+                  onClick={() => chooseLevel(item)}
+                  className={`group motion-reveal motion-lift relative overflow-hidden rounded-[2rem] bg-gradient-to-br ${note.tone} p-6 text-start text-[#23301f] shadow-[0_20px_45px_rgba(0,0,0,.13)] transition duration-300 hover:-translate-y-1`}
+                >
+                  <span className="font-display text-6xl font-black opacity-20">
+                    {note.number}
+                  </span>
+                  <p className="mt-8 text-xs font-bold tracking-[.16em]">
+                    {item}
+                  </p>
+                  <h3 className="mt-2 font-display text-3xl font-bold">
+                    {note.name[locale]}
+                  </h3>
+                  <p className="mt-3 min-h-12 text-sm leading-6 text-[#53604a]">
+                    {note.note[locale]}
+                  </p>
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold">
+                    {t.start}
+                    <ArrowUpRight className="size-4 transition group-hover:translate-x-1" />
+                  </span>
+                  <span className="absolute -bottom-10 -end-1 text-[9rem] font-black leading-none text-white/20">
+                    +
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-    <section id="method" className="motion-reveal relative overflow-hidden py-24" data-reveal="section"><div className="absolute end-0 top-0 -z-10 h-full w-1/2 bg-[#ede9dc]" /><div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[.95fr_1.05fr] lg:px-8"><div className="relative mx-auto w-full max-w-md"><div className="absolute -start-8 -top-8 size-28 rounded-full border border-[#536d37]/25" /><div className="absolute -bottom-8 -end-8 size-40 rounded-full bg-[#dce6c8]/50" /><img src={lessonArt} alt="Visual German lesson" className="motion-image relative rounded-[2.2rem] border-8 border-white shadow-[0_24px_65px_rgba(38,49,29,.16)]" /><div className="absolute -bottom-5 -end-4 rounded-2xl bg-[#27412f] px-5 py-4 text-sm font-bold text-white shadow-xl"><Check className="me-2 inline size-4 text-[#d9e5bf]" />5 learning parts</div></div><div><p className="text-xs font-bold tracking-[.18em] text-[#89966d]">02 — THE METHOD</p><h2 className="mt-4 max-w-xl font-display text-4xl font-bold leading-tight sm:text-5xl">Dialogue. Vocabulary. Grammar. Practice.</h2><p className="mt-6 max-w-xl text-base leading-8 text-[#64705c]">{t.flagshipText}</p><div className="mt-8 grid gap-3 sm:grid-cols-2">{[[MessageCircle, "Dialogues"], [Languages, "10–15 words"], [BookOpen, "Grammar focus"], [BrainCircuit, "Practical exercises"]].map(([Icon, label]) => <div key={String(label)} className="motion-lift flex items-center gap-3 rounded-2xl border border-[#27412f]/8 bg-white/80 p-4 shadow-sm"><Icon className="size-5 text-[#536d37]" /><span className="text-sm font-semibold">{String(label)}</span></div>)}</div></div></div></section>
+      <section
+        id="method"
+        className="motion-reveal relative overflow-hidden py-24"
+        data-reveal="section"
+      >
+        <div className="absolute end-0 top-0 -z-10 h-full w-1/2 bg-[#ede9dc]" />
+        <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[.95fr_1.05fr] lg:px-8">
+          <div className="relative mx-auto w-full max-w-md">
+            <div className="absolute -start-8 -top-8 size-28 rounded-full border border-[#16849a]/25" />
+            <div className="absolute -bottom-8 -end-8 size-40 rounded-full bg-[#c8edf1]/50" />
+            <img
+              src={lessonArt}
+              alt="Visual German lesson"
+              className="motion-image relative rounded-[2.2rem] border-8 border-white shadow-[0_24px_65px_rgba(38,49,29,.16)]"
+            />
+            <div className="absolute -bottom-5 -end-4 rounded-2xl bg-[#10283f] px-5 py-4 text-sm font-bold text-white shadow-xl">
+              <Check className="me-2 inline size-4 text-[#d9e5bf]" />5 learning
+              parts
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
+              02 — THE METHOD
+            </p>
+            <h2 className="mt-4 max-w-xl font-display text-4xl font-bold leading-tight sm:text-5xl">
+              Dialogue. Vocabulary. Grammar. Practice.
+            </h2>
+            <p className="mt-6 max-w-xl text-base leading-8 text-[#64705c]">
+              {t.flagshipText}
+            </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {[
+                [MessageCircle, "Dialogues"],
+                [Languages, "10–15 words"],
+                [BookOpen, "Grammar focus"],
+                [BrainCircuit, "Practical exercises"],
+              ].map(([Icon, label]) => (
+                <div
+                  key={String(label)}
+                  className="motion-lift flex items-center gap-3 rounded-2xl border border-[#10283f]/8 bg-white/80 p-4 shadow-sm"
+                >
+                  <Icon className="size-5 text-[#16849a]" />
+                  <span className="text-sm font-semibold">{String(label)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="books" className="motion-reveal bg-[#e7eadf] py-24" data-reveal="section"><div className="mx-auto max-w-7xl px-5 lg:px-8"><div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end"><div><p className="text-xs font-bold tracking-[.18em] text-[#89966d]">03 — BOOKS</p><h2 className="mt-4 max-w-xl font-display text-4xl font-bold sm:text-5xl">{t.library}</h2></div><p className="max-w-md text-base leading-7 text-[#667064]">{t.libraryText}</p></div><div className="mt-14 grid gap-8 lg:grid-cols-[.65fr_1.35fr]"><div className="rounded-[2.2rem] bg-[#27412f] p-7 text-[#f8f5eb] shadow-[0_22px_60px_rgba(39,65,47,.17)]"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-bold tracking-[.18em] text-[#c8d5a9]">{t.flagshipEyebrow}</p><h3 className="mt-3 font-display text-3xl font-bold">{t.flagshipTitle}</h3></div><BookOpen className="size-7 text-[#dce6c8]" /></div><p className="mt-6 text-sm leading-7 text-[#dfe8d8]">{t.flagshipText}</p><div className="mt-8 space-y-3 text-sm"><p className="flex items-center gap-3"><CheckCircle2 className="size-4 text-[#c8d5a9]" />{t.availableNote}</p><p className="flex items-center gap-3"><CheckCircle2 className="size-4 text-[#c8d5a9]" />{t.sampleNote}</p><p className="flex items-center gap-3"><CheckCircle2 className="size-4 text-[#c8d5a9]" />{t.orderGuide}</p></div><a href="https://ig.me/m/medical.sketcher" target="_blank" rel="noreferrer" className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#b45b43] px-5 py-3 text-sm font-bold text-white hover:bg-[#9c4b37]">{t.book}<ArrowUpRight className="size-4" /></a></div><div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{shelves.map(shelf => { const product = shelf.id === "A1.1" ? a11Book : null; return <section key={shelf.id} className="rounded-[2rem] border border-[#27412f]/10 bg-white/55 p-4"><div className="mb-4 flex items-center justify-between"><div><p className="text-[10px] font-bold tracking-[.18em] text-[#89966d]">LEVEL {shelf.parent}</p><h3 className="font-display text-2xl font-bold">{shelf.id}</h3></div><span className={`rounded-full px-2.5 py-1 text-[9px] font-bold tracking-[.1em] ${shelf.status === "available" ? "bg-[#dce6c8] text-[#27412f]" : "bg-[#f1e5cf] text-[#8a5d2d]"}`}>{shelf.status === "available" ? t.available.toUpperCase() : t.empty.toUpperCase()}</span></div>{product ? <ProductCard product={product} label={t.book} locale={locale} onPreview={() => setPreviewOpen(true)} onShare={shareA11Book} /> : <EmptyBook level={shelf.id} label={t.empty} note={shelf.note[locale]} />}</section>; })}</div></div></div></section>
+      <section
+        id="books"
+        className="motion-reveal bg-[#e7eadf] py-24"
+        data-reveal="section"
+      >
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
+                03 — BOOKS
+              </p>
+              <h2 className="mt-4 max-w-xl font-display text-4xl font-bold sm:text-5xl">
+                {t.library}
+              </h2>
+            </div>
+            <p className="max-w-md text-base leading-7 text-[#607487]">
+              {t.libraryText}
+            </p>
+          </div>
+          <div className="mt-14 grid gap-8 lg:grid-cols-[.65fr_1.35fr]">
+            <div className="rounded-[2.2rem] bg-[#10283f] p-7 text-[#f4f8fa] shadow-[0_22px_60px_rgba(39,65,47,.17)]">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-bold tracking-[.18em] text-[#c8d5a9]">
+                    {t.flagshipEyebrow}
+                  </p>
+                  <h3 className="mt-3 font-display text-3xl font-bold">
+                    {t.flagshipTitle}
+                  </h3>
+                </div>
+                <BookOpen className="size-7 text-[#c8edf1]" />
+              </div>
+              <p className="mt-6 text-sm leading-7 text-[#dfe8d8]">
+                {t.flagshipText}
+              </p>
+              <div className="mt-8 space-y-3 text-sm">
+                <p className="flex items-center gap-3">
+                  <CheckCircle2 className="size-4 text-[#c8d5a9]" />
+                  {t.availableNote}
+                </p>
+                <p className="flex items-center gap-3">
+                  <CheckCircle2 className="size-4 text-[#c8d5a9]" />
+                  {t.sampleNote}
+                </p>
+                <p className="flex items-center gap-3">
+                  <CheckCircle2 className="size-4 text-[#c8d5a9]" />
+                  {t.orderGuide}
+                </p>
+              </div>
+              <a
+                href="https://ig.me/m/medical.sketcher"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#e07a5f] px-5 py-3 text-sm font-bold text-white hover:bg-[#9c4b37]"
+              >
+                {t.book}
+                <ArrowUpRight className="size-4" />
+              </a>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {shelves.map(shelf => {
+                const product = shelf.id === "A1.1" ? a11Book : null;
+                return (
+                  <section
+                    key={shelf.id}
+                    className="rounded-[2rem] border border-[#10283f]/10 bg-white/55 p-4"
+                  >
+                    <div className="mb-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-bold tracking-[.18em] text-[#16849a]">
+                          LEVEL {shelf.parent}
+                        </p>
+                        <h3 className="font-display text-2xl font-bold">
+                          {shelf.id}
+                        </h3>
+                      </div>
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-[9px] font-bold tracking-[.1em] ${shelf.status === "available" ? "bg-[#c8edf1] text-[#10283f]" : "bg-[#f1e5cf] text-[#8a5d2d]"}`}
+                      >
+                        {shelf.status === "available"
+                          ? t.available.toUpperCase()
+                          : t.empty.toUpperCase()}
+                      </span>
+                    </div>
+                    {product ? (
+                      <ProductCard
+                        product={product}
+                        label={t.book}
+                        locale={locale}
+                        onPreview={() => setPreviewOpen(true)}
+                        onShare={shareA11Book}
+                      />
+                    ) : (
+                      <EmptyBook
+                        level={shelf.id}
+                        label={t.empty}
+                        note={shelf.note[locale]}
+                      />
+                    )}
+                  </section>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="order" className="motion-reveal relative overflow-hidden bg-[#f8f5eb] py-24" data-reveal="section"><div className="absolute -start-24 top-12 size-72 rounded-full bg-[#eddfc3]/55 blur-3xl" /><div className="relative mx-auto max-w-7xl px-5 lg:px-8"><div className="max-w-2xl"><p className="text-xs font-bold tracking-[.18em] text-[#89966d]">04 — ORDER FLOW</p><h2 className="mt-4 font-display text-4xl font-bold sm:text-5xl">{t.orderTitle}</h2><p className="mt-5 text-base leading-8 text-[#667064]">{t.orderText}</p></div><div className="mt-12 grid gap-5 md:grid-cols-3">{[[BookOpen, "01", t.stepOne, t.stepOneText], [Send, "02", t.stepTwo, t.stepTwoText], [HeartPulse, "03", t.stepThree, t.stepThreeText]].map(([Icon, number, title, description]) => <article key={String(number)} className="motion-lift rounded-[2rem] border border-[#27412f]/10 bg-white p-6 shadow-[0_15px_45px_rgba(39,65,47,.06)]"><div className="flex items-center justify-between"><span className="font-display text-4xl font-black text-[#dbe4c5]">{String(number)}</span><Icon className="size-6 text-[#536d37]" /></div><h3 className="mt-10 font-display text-2xl font-bold">{String(title)}</h3><p className="mt-3 text-sm leading-7 text-[#687360]">{String(description)}</p></article>)}</div><div className="mt-14 grid gap-5 lg:grid-cols-2"><div className="rounded-[2rem] border border-[#27412f]/10 bg-[#eef1e4] p-6"><div className="flex items-center gap-3"><Instagram className="size-5 text-[#a5523c]" /><h3 className="font-display text-2xl font-bold">@medical.sketcher</h3></div><p className="mt-3 text-sm leading-7 text-[#687360]">{t.orderText}</p><a href="https://ig.me/m/medical.sketcher" target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#27412f] px-5 py-3 text-sm font-bold text-white hover:bg-[#416044]">Open Instagram Direct <ArrowUpRight className="size-4" /></a></div><div className="rounded-[2rem] bg-[#ede3cc] p-6"><h3 className="font-display text-2xl font-bold">{t.faqTitle}</h3><div className="mt-4 space-y-2">{[[t.faqOne, t.faqOneText], [t.faqTwo, t.faqTwoText], [t.faqThree, t.faqThreeText]].map(([question, answer]) => <details key={question} className="group motion-lift rounded-xl bg-white/55 px-4 py-3"><summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold">{question}<ChevronDown className="size-4 transition group-open:rotate-180" /></summary><p className="pt-3 text-sm leading-6 text-[#687360]">{answer}</p></details>)}</div></div></div></div></section>
+      <section
+        id="order"
+        className="motion-reveal relative overflow-hidden bg-[#f4f8fa] py-24"
+        data-reveal="section"
+      >
+        <div className="absolute -start-24 top-12 size-72 rounded-full bg-[#eddfc3]/55 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
+              04 — ORDER FLOW
+            </p>
+            <h2 className="mt-4 font-display text-4xl font-bold sm:text-5xl">
+              {t.orderTitle}
+            </h2>
+            <p className="mt-5 text-base leading-8 text-[#607487]">
+              {t.orderText}
+            </p>
+          </div>
+          <div className="mt-10 max-w-3xl overflow-hidden rounded-[2rem] border-8 border-white shadow-[0_24px_65px_rgba(16,40,63,.12)]">
+            <img
+              src={studyArt}
+              alt="Nurses practising a German handover conversation"
+              className="h-64 w-full object-cover object-center sm:h-80"
+              loading="lazy"
+            />
+          </div>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {[
+              [BookOpen, "01", t.stepOne, t.stepOneText],
+              [Send, "02", t.stepTwo, t.stepTwoText],
+              [HeartPulse, "03", t.stepThree, t.stepThreeText],
+            ].map(([Icon, number, title, description]) => (
+              <article
+                key={String(number)}
+                className="motion-lift rounded-[2rem] border border-[#10283f]/10 bg-white p-6 shadow-[0_15px_45px_rgba(39,65,47,.06)]"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-display text-4xl font-black text-[#dbe4c5]">
+                    {String(number)}
+                  </span>
+                  <Icon className="size-6 text-[#16849a]" />
+                </div>
+                <h3 className="mt-10 font-display text-2xl font-bold">
+                  {String(title)}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-[#607487]">
+                  {String(description)}
+                </p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-14 grid gap-5 lg:grid-cols-2">
+            <div className="rounded-[2rem] border border-[#10283f]/10 bg-[#eaf4f6] p-6">
+              <div className="flex items-center gap-3">
+                <Instagram className="size-5 text-[#16849a]" />
+                <h3 className="font-display text-2xl font-bold">
+                  @medical.sketcher
+                </h3>
+              </div>
+              <p className="mt-3 text-sm leading-7 text-[#607487]">
+                {t.orderText}
+              </p>
+              <a
+                href="https://ig.me/m/medical.sketcher"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#10283f] px-5 py-3 text-sm font-bold text-white hover:bg-[#176b7d]"
+              >
+                Open Instagram Direct <ArrowUpRight className="size-4" />
+              </a>
+            </div>
+            <div className="rounded-[2rem] bg-[#ede3cc] p-6">
+              <h3 className="font-display text-2xl font-bold">{t.faqTitle}</h3>
+              <div className="mt-4 space-y-2">
+                {[
+                  [t.faqOne, t.faqOneText],
+                  [t.faqTwo, t.faqTwoText],
+                  [t.faqThree, t.faqThreeText],
+                ].map(([question, answer]) => (
+                  <details
+                    key={question}
+                    className="group motion-lift rounded-xl bg-white/55 px-4 py-3"
+                  >
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold">
+                      {question}
+                      <ChevronDown className="size-4 transition group-open:rotate-180" />
+                    </summary>
+                    <p className="pt-3 text-sm leading-6 text-[#607487]">
+                      {answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="tests" className="motion-reveal relative overflow-hidden bg-[#fffdf7] py-24" data-reveal="section"><div className="absolute -end-16 top-10 size-72 rounded-full bg-[#dce6c8]/45 blur-3xl" /><div className="relative mx-auto max-w-7xl px-5 lg:px-8"><div className="grid gap-8 lg:grid-cols-[.72fr_1.28fr]"><div><p className="text-xs font-bold tracking-[.16em] text-[#89966d]">05 — BOOK ASSESSMENTS</p><h2 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl">{t.testTitle}</h2><p className="mt-5 max-w-sm text-base leading-8 text-[#667064]">{t.testText}</p><div className="mt-8 rounded-2xl bg-[#eef1e4] p-5 text-sm leading-7 text-[#53604a]"><div className="flex items-center gap-2 font-semibold text-[#27412f]"><ClipboardCheck className="size-5" />A1.1 focus</div><p className="mt-2">Introductions, nursing professions, family, furniture, prices, accusative, modal verbs, appointments, separable verbs and perfect tense.</p></div></div><div className="rounded-[2.2rem] border border-[#27412f]/10 bg-white p-6 shadow-[0_20px_60px_rgba(40,59,37,.09)] sm:p-8">{level === "A1/A2" ? <>{showResult ? <div className="grid min-h-[420px] place-items-center text-center"><div><div className="mx-auto grid size-24 place-items-center rounded-full bg-[#dce6c8] font-display text-3xl font-black text-[#27412f]">{score}/{questions.length}</div><p className="mt-7 text-xs font-bold tracking-[.16em] text-[#89966d]">A1.1 ASSESSMENT</p><h3 className="mt-3 font-display text-3xl font-bold">{score / Math.max(questions.length, 1) >= .7 ? "Well done" : "Keep practising"}</h3><p className="mt-3 text-sm leading-6 text-[#667064]">{t.score}: {score} / {questions.length}</p><Button className="mt-6 rounded-full bg-[#27412f]" onClick={() => { setAnswers({}); setShowResult(false); }}>{t.retry}</Button></div></div> : <><div className="flex items-center justify-between gap-4"><div><p className="text-xs font-bold tracking-[.16em] text-[#89966d]">A1.1 ASSESSMENT</p><h3 className="mt-2 font-display text-3xl font-bold">30 questions</h3></div><div className="grid size-11 place-items-center rounded-full bg-[#eef1e4]"><CheckCircle2 className="size-5 text-[#536d37]" /></div></div><div className="mt-7 max-h-[560px] space-y-8 overflow-auto pe-2">{questions.map((question, index) => <div key={question.id}><p className="text-xs font-bold tracking-[.1em] text-[#89966d]">{index + 1} / {questions.length}</p><h4 className="mt-2 font-display text-xl font-bold leading-snug">{question.prompt}</h4><div className="mt-3 grid gap-2">{question.choices.map((choice, choiceIndex) => <button key={choice} type="button" onClick={() => setAnswers(current => ({ ...current, [question.id]: choiceIndex }))} className={`rounded-xl border px-4 py-3 text-start text-sm transition ${answers[question.id] === choiceIndex ? "border-[#536d37] bg-[#dce6c8] font-semibold" : "border-[#27412f]/10 bg-[#fffdf7] hover:border-[#536d37]/50"}`}><span className="me-2 inline-grid size-5 place-items-center rounded-full border border-current text-[10px]">{String.fromCharCode(65 + choiceIndex)}</span>{choice}</button>)}</div></div>)}</div><Button className="mt-8 rounded-full bg-[#536d37] px-6" disabled={Object.keys(answers).length !== questions.length} onClick={() => setShowResult(true)}>{t.result}<ArrowUpRight className="size-4" /></Button></>}</> : <><div className="flex items-center justify-between gap-4"><div><p className="text-xs font-bold tracking-[.16em] text-[#89966d]">ASSESSMENT LIBRARY</p><h3 className="mt-2 font-display text-3xl font-bold">{t.empty}</h3></div><ClipboardCheck className="size-9 text-[#536d37]" /></div><div className="mt-7 grid gap-3 sm:grid-cols-2">{shelves.filter(shelf => shelf.id !== "A1.1").map(shelf => <div key={shelf.id} className="rounded-2xl border border-dashed border-[#536d37]/25 bg-[#eef1e4] p-4"><span className="text-[10px] font-bold tracking-[.15em] text-[#89966d]">FINAL ASSESSMENT</span><p className="mt-2 font-display text-2xl font-bold">{shelf.id}</p><span className="mt-4 inline-block rounded-full bg-[#f1e5cf] px-3 py-1 text-[10px] font-bold tracking-[.1em] text-[#8a5d2d]">{t.empty.toUpperCase()}</span></div>)}</div></>}</div></div><div className="mt-10 rounded-[2rem] border border-[#27412f]/10 bg-[#eef1e4] p-5 dark:border-[#c9d9c7]/15 dark:bg-[#1f3026]"><div className="flex items-center gap-3"><MessageCircle className="size-5 text-[#b45b43]" /><div><p className="text-[10px] font-bold tracking-[.16em] text-[#89966d]">LESSON VOICES</p><h3 className="font-display text-2xl font-bold">{locale === "ar" ? "شارك رأيك تحت كل درس" : locale === "de" ? "Teile deine Meinung unter jeder Lektion" : "Share your thoughts under each lesson"}</h3></div></div><div className="mt-4 grid gap-3 md:grid-cols-2">{lessonFeedbackKeys.map(([lessonKey, title]) => <LessonFeedbackPanel key={lessonKey} lessonKey={lessonKey} title={title} locale={locale} />)}</div></div></div></section>
+      <section
+        id="tests"
+        className="motion-reveal relative overflow-hidden bg-[#ffffff] py-24"
+        data-reveal="section"
+      >
+        <div className="absolute -end-16 top-10 size-72 rounded-full bg-[#c8edf1]/45 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[.72fr_1.28fr]">
+            <div>
+              <p className="text-xs font-bold tracking-[.16em] text-[#16849a]">
+                05 — BOOK ASSESSMENTS
+              </p>
+              <h2 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl">
+                {t.testTitle}
+              </h2>
+              <p className="mt-5 max-w-sm text-base leading-8 text-[#607487]">
+                {t.testText}
+              </p>
+              <div className="mt-8 rounded-2xl bg-[#eaf4f6] p-5 text-sm leading-7 text-[#53604a]">
+                <div className="flex items-center gap-2 font-semibold text-[#10283f]">
+                  <ClipboardCheck className="size-5" />
+                  A1.1 focus
+                </div>
+                <p className="mt-2">
+                  Introductions, nursing professions, family, furniture, prices,
+                  accusative, modal verbs, appointments, separable verbs and
+                  perfect tense.
+                </p>
+              </div>
+            </div>
+            <div className="rounded-[2.2rem] border border-[#10283f]/10 bg-white p-6 shadow-[0_20px_60px_rgba(40,59,37,.09)] sm:p-8">
+              {level === "A1/A2" ? (
+                <>
+                  {showResult ? (
+                    <div className="grid min-h-[420px] place-items-center text-center">
+                      <div>
+                        <div className="mx-auto grid size-24 place-items-center rounded-full bg-[#c8edf1] font-display text-3xl font-black text-[#10283f]">
+                          {score}/{questions.length}
+                        </div>
+                        <p className="mt-7 text-xs font-bold tracking-[.16em] text-[#16849a]">
+                          A1.1 ASSESSMENT
+                        </p>
+                        <h3 className="mt-3 font-display text-3xl font-bold">
+                          {score / Math.max(questions.length, 1) >= 0.7
+                            ? "Well done"
+                            : "Keep practising"}
+                        </h3>
+                        <p className="mt-3 text-sm leading-6 text-[#607487]">
+                          {t.score}: {score} / {questions.length}
+                        </p>
+                        <Button
+                          className="mt-6 rounded-full bg-[#10283f]"
+                          onClick={() => {
+                            setAnswers({});
+                            setShowResult(false);
+                          }}
+                        >
+                          {t.retry}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-bold tracking-[.16em] text-[#16849a]">
+                            A1.1 ASSESSMENT
+                          </p>
+                          <h3 className="mt-2 font-display text-3xl font-bold">
+                            30 questions
+                          </h3>
+                        </div>
+                        <div className="grid size-11 place-items-center rounded-full bg-[#eaf4f6]">
+                          <CheckCircle2 className="size-5 text-[#16849a]" />
+                        </div>
+                      </div>
+                      <div className="mt-7 max-h-[560px] space-y-8 overflow-auto pe-2">
+                        {questions.map((question, index) => (
+                          <div key={question.id}>
+                            <p className="text-xs font-bold tracking-[.1em] text-[#16849a]">
+                              {index + 1} / {questions.length}
+                            </p>
+                            <h4 className="mt-2 font-display text-xl font-bold leading-snug">
+                              {question.prompt}
+                            </h4>
+                            <div className="mt-3 grid gap-2">
+                              {question.choices.map((choice, choiceIndex) => (
+                                <button
+                                  key={choice}
+                                  type="button"
+                                  onClick={() =>
+                                    setAnswers(current => ({
+                                      ...current,
+                                      [question.id]: choiceIndex,
+                                    }))
+                                  }
+                                  className={`rounded-xl border px-4 py-3 text-start text-sm transition ${answers[question.id] === choiceIndex ? "border-[#16849a] bg-[#c8edf1] font-semibold" : "border-[#10283f]/10 bg-[#ffffff] hover:border-[#16849a]/50"}`}
+                                >
+                                  <span className="me-2 inline-grid size-5 place-items-center rounded-full border border-current text-[10px]">
+                                    {String.fromCharCode(65 + choiceIndex)}
+                                  </span>
+                                  {choice}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <Button
+                        className="mt-8 rounded-full bg-[#16849a] px-6"
+                        disabled={
+                          Object.keys(answers).length !== questions.length
+                        }
+                        onClick={() => setShowResult(true)}
+                      >
+                        {t.result}
+                        <ArrowUpRight className="size-4" />
+                      </Button>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-bold tracking-[.16em] text-[#16849a]">
+                        ASSESSMENT LIBRARY
+                      </p>
+                      <h3 className="mt-2 font-display text-3xl font-bold">
+                        {t.empty}
+                      </h3>
+                    </div>
+                    <ClipboardCheck className="size-9 text-[#16849a]" />
+                  </div>
+                  <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                    {shelves
+                      .filter(shelf => shelf.id !== "A1.1")
+                      .map(shelf => (
+                        <div
+                          key={shelf.id}
+                          className="rounded-2xl border border-dashed border-[#16849a]/25 bg-[#eaf4f6] p-4"
+                        >
+                          <span className="text-[10px] font-bold tracking-[.15em] text-[#16849a]">
+                            FINAL ASSESSMENT
+                          </span>
+                          <p className="mt-2 font-display text-2xl font-bold">
+                            {shelf.id}
+                          </p>
+                          <span className="mt-4 inline-block rounded-full bg-[#f1e5cf] px-3 py-1 text-[10px] font-bold tracking-[.1em] text-[#8a5d2d]">
+                            {t.empty.toUpperCase()}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="mt-10 rounded-[2rem] border border-[#10283f]/10 bg-[#eaf4f6] p-5 dark:border-[#c9d9c7]/15 dark:bg-[#1f3026]">
+            <div className="flex items-center gap-3">
+              <MessageCircle className="size-5 text-[#e07a5f]" />
+              <div>
+                <p className="text-[10px] font-bold tracking-[.16em] text-[#16849a]">
+                  LESSON VOICES
+                </p>
+                <h3 className="font-display text-2xl font-bold">
+                  {locale === "ar"
+                    ? "شارك رأيك تحت كل درس"
+                    : locale === "de"
+                      ? "Teile deine Meinung unter jeder Lektion"
+                      : "Share your thoughts under each lesson"}
+                </h3>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {lessonFeedbackKeys.map(([lessonKey, title]) => (
+                <LessonFeedbackPanel
+                  key={lessonKey}
+                  lessonKey={lessonKey}
+                  title={title}
+                  locale={locale}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section id="feedback" className="motion-reveal bg-[#dfe7d2] py-20" data-reveal="section"><div className="mx-auto grid max-w-7xl items-center gap-8 px-5 lg:grid-cols-[1.1fr_.9fr] lg:px-8"><div><p className="text-xs font-bold tracking-[.18em] text-[#71845d]">06 — LEARNER VOICES</p><h2 className="mt-4 max-w-2xl font-display text-4xl font-bold leading-tight sm:text-5xl">{t.feedbackTitle}</h2><p className="mt-5 max-w-2xl text-base leading-8 text-[#596852]">{t.feedbackText}</p></div><div data-reveal="card" className="motion-reveal motion-lift rounded-[2rem] border border-[#536d37]/20 bg-[#f8f5eb]/70 p-6"><ShieldCheck className="size-7 text-[#536d37]" /><h3 className="mt-5 font-display text-2xl font-bold">{t.reviews}</h3><p className="mt-3 text-sm leading-7 text-[#687360]">{t.reviewsEmpty}</p><div className="mt-5 rounded-xl bg-white/60 px-4 py-3 text-xs font-semibold text-[#536d37]">{t.feedbackNote}</div></div></div></section>
+      <section
+        id="feedback"
+        className="motion-reveal bg-[#d9f0f1] py-20"
+        data-reveal="section"
+      >
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-5 lg:grid-cols-[1.1fr_.9fr] lg:px-8">
+          <div>
+            <p className="text-xs font-bold tracking-[.18em] text-[#71845d]">
+              06 — LEARNER VOICES
+            </p>
+            <h2 className="mt-4 max-w-2xl font-display text-4xl font-bold leading-tight sm:text-5xl">
+              {t.feedbackTitle}
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-[#596852]">
+              {t.feedbackText}
+            </p>
+          </div>
+          <div
+            data-reveal="card"
+            className="motion-reveal motion-lift rounded-[2rem] border border-[#16849a]/20 bg-[#f4f8fa]/70 p-6"
+          >
+            <ShieldCheck className="size-7 text-[#16849a]" />
+            <h3 className="mt-5 font-display text-2xl font-bold">
+              {t.reviews}
+            </h3>
+            <p className="mt-3 text-sm leading-7 text-[#607487]">
+              {t.reviewsEmpty}
+            </p>
+            <div className="mt-5 rounded-xl bg-white/60 px-4 py-3 text-xs font-semibold text-[#16849a]">
+              {t.feedbackNote}
+            </div>
+          </div>
+        </div>
+      </section>
 
-    {previewOpen && <div className="fixed inset-0 z-[90] grid place-items-center bg-[#172019]/75 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="A1.1 free sample"><button type="button" className="absolute inset-0 cursor-default" onClick={() => setPreviewOpen(false)} aria-label="Close preview overlay" /><div className="relative flex h-[min(88vh,760px)] w-full max-w-4xl flex-col overflow-hidden rounded-[1.8rem] bg-[#fffdf7] shadow-2xl"><div className="flex items-center justify-between gap-4 border-b border-[#27412f]/10 px-5 py-4"><div><p className="text-[10px] font-bold tracking-[.16em] text-[#89966d]">A1.1 FREE SAMPLE</p><h3 className="font-display text-xl font-bold">German for Nurse A1.1</h3></div><div className="flex items-center gap-2"><a href="/manus-storage/a1-1-preview_e9cef788.pdf" download="German-for-Nurse-A1.1-free-sample.pdf" className="inline-flex items-center gap-2 rounded-full bg-[#27412f] px-3 py-2 text-xs font-semibold text-white hover:bg-[#416044]"><Download className="size-4" />Download sample</a><Button type="button" variant="ghost" size="icon" onClick={() => setPreviewOpen(false)} aria-label="Close preview"><X className="size-5" /></Button></div></div><div className="min-h-0 flex-1 space-y-5 overflow-auto bg-[#f8f5eb] p-4 sm:p-7">{["/a1-1-preview-1.png", "/a1-1-preview-2.png", "/a1-1-preview-3.png", "/a1-1-preview-4.png"].map((page, index) => <img key={page} src={page} alt={`A1.1 preview page ${index + 1}`} loading="lazy" decoding="async" className="mx-auto w-full max-w-2xl rounded-xl shadow-md" />)}</div></div></div>}
+      {previewOpen && (
+        <div
+          className="fixed inset-0 z-[90] grid place-items-center bg-[#172019]/75 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="A1.1 free sample"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default"
+            onClick={() => setPreviewOpen(false)}
+            aria-label="Close preview overlay"
+          />
+          <div className="relative flex h-[min(88vh,760px)] w-full max-w-4xl flex-col overflow-hidden rounded-[1.8rem] bg-[#ffffff] shadow-2xl">
+            <div className="flex items-center justify-between gap-4 border-b border-[#10283f]/10 px-5 py-4">
+              <div>
+                <p className="text-[10px] font-bold tracking-[.16em] text-[#16849a]">
+                  A1.1 FREE SAMPLE
+                </p>
+                <h3 className="font-display text-xl font-bold">
+                  German for Nurse A1.1
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/manus-storage/a1-1-preview_e9cef788.pdf"
+                  download="German-for-Nurse-A1.1-free-sample.pdf"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#10283f] px-3 py-2 text-xs font-semibold text-white hover:bg-[#176b7d]"
+                >
+                  <Download className="size-4" />
+                  Download sample
+                </a>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setPreviewOpen(false)}
+                  aria-label="Close preview"
+                >
+                  <X className="size-5" />
+                </Button>
+              </div>
+            </div>
+            <div className="min-h-0 flex-1 space-y-5 overflow-auto bg-[#f4f8fa] p-4 sm:p-7">
+              {[
+                "/a1-1-preview-1.png",
+                "/a1-1-preview-2.png",
+                "/a1-1-preview-3.png",
+                "/a1-1-preview-4.png",
+              ].map((page, index) => (
+                <img
+                  key={page}
+                  src={page}
+                  alt={`A1.1 preview page ${index + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  className="mx-auto w-full max-w-2xl rounded-xl shadow-md"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
-    <footer className="bg-[#1e2b1e] py-14 text-[#edf0e5]"><div className="mx-auto grid max-w-7xl gap-10 px-5 sm:grid-cols-[1.4fr_.8fr_.8fr] lg:px-8"><div><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl bg-[#dce6c8] font-display text-lg font-black text-[#27412f]">M</span><strong className="font-display text-xl">medical.sketcher</strong></div><p className="mt-4 max-w-sm text-sm leading-7 text-[#c8d0c0]">German language learning for the care profession — structured, visual and practical.</p></div><div><p className="text-xs font-bold tracking-[.16em] text-[#c8d5a9]">EXPLORE</p><div className="mt-4 grid gap-3 text-sm text-[#c8d0c0]"><a href="#books" className="hover:text-white">{t.books}</a><a href="#tests" className="hover:text-white">{t.tests}</a><a href="#method" className="hover:text-white">{t.method}</a></div></div><div><p className="text-xs font-bold tracking-[.16em] text-[#c8d5a9]">LEGAL</p><div className="mt-4 grid gap-3 text-sm text-[#c8d0c0]"><Link href={locale === "ar" ? "/ar/terms" : locale === "de" ? "/de/terms" : "/terms"} className="underline underline-offset-4 hover:text-white">{locale === "ar" ? "شروط الاستخدام" : locale === "de" ? "Nutzungsbedingungen" : "Terms of use"}</Link><Link href={locale === "ar" ? "/ar/privacy" : locale === "de" ? "/de/privacy" : "/privacy"} className="underline underline-offset-4 hover:text-white">{locale === "ar" ? "سياسة الخصوصية" : locale === "de" ? "Datenschutz" : "Privacy policy"}</Link><span className="text-xs text-[#9da995]">Arabic · English · Deutsch</span></div></div></div><div className="mx-auto mt-10 max-w-7xl border-t border-white/10 px-5 pt-6 text-xs text-[#9da995] lg:px-8">© medical.sketcher · {t.secure}</div></footer>
+      <footer className="bg-[#1e2b1e] py-14 text-[#edf0e5]">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:grid-cols-[1.4fr_.8fr_.8fr] lg:px-8">
+          <div>
+            <div className="flex items-center gap-3">
+              <span className="grid size-10 place-items-center rounded-xl bg-[#c8edf1] font-display text-lg font-black text-[#10283f]">
+                M
+              </span>
+              <strong className="font-display text-xl">medical.sketcher</strong>
+            </div>
+            <p className="mt-4 max-w-sm text-sm leading-7 text-[#c8d0c0]">
+              German language learning for the care profession — structured,
+              visual and practical.
+            </p>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-[.16em] text-[#c8d5a9]">
+              EXPLORE
+            </p>
+            <div className="mt-4 grid gap-3 text-sm text-[#c8d0c0]">
+              <a href="#books" className="hover:text-white">
+                {t.books}
+              </a>
+              <a href="#tests" className="hover:text-white">
+                {t.tests}
+              </a>
+              <a href="#method" className="hover:text-white">
+                {t.method}
+              </a>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-[.16em] text-[#c8d5a9]">
+              LEGAL
+            </p>
+            <div className="mt-4 grid gap-3 text-sm text-[#c8d0c0]">
+              <Link
+                href={
+                  locale === "ar"
+                    ? "/ar/terms"
+                    : locale === "de"
+                      ? "/de/terms"
+                      : "/terms"
+                }
+                className="underline underline-offset-4 hover:text-white"
+              >
+                {locale === "ar"
+                  ? "شروط الاستخدام"
+                  : locale === "de"
+                    ? "Nutzungsbedingungen"
+                    : "Terms of use"}
+              </Link>
+              <Link
+                href={
+                  locale === "ar"
+                    ? "/ar/privacy"
+                    : locale === "de"
+                      ? "/de/privacy"
+                      : "/privacy"
+                }
+                className="underline underline-offset-4 hover:text-white"
+              >
+                {locale === "ar"
+                  ? "سياسة الخصوصية"
+                  : locale === "de"
+                    ? "Datenschutz"
+                    : "Privacy policy"}
+              </Link>
+              <span className="text-xs text-[#9da995]">
+                Arabic · English · Deutsch
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="mx-auto mt-10 max-w-7xl border-t border-white/10 px-5 pt-6 text-xs text-[#9da995] lg:px-8">
+          © medical.sketcher · {t.secure}
+        </div>
+      </footer>
 
-    {shareNotice && <div className="fixed bottom-5 start-5 z-[80] rounded-full bg-[#27412f] px-4 py-3 text-xs font-semibold text-white shadow-xl" role="status">{shareNotice}</div>}
-    <div className="fixed bottom-5 end-5 z-[70] flex flex-col items-end gap-3"><div className="w-[min(24rem,calc(100vw-2.5rem))] overflow-hidden rounded-[1.6rem] bg-white shadow-2xl">{chatOpen && <><div className="flex items-center justify-between bg-[#27412f] px-5 py-4 text-white"><div><strong className="font-display text-lg">{assistantName}</strong><p className="text-[10px] tracking-[.15em] text-[#dce6c8]">AI STUDY ASSISTANT</p></div><button type="button" onClick={() => setChatOpen(false)} aria-label="Close assistant"><X className="size-4" /></button></div><div className="px-5 pt-3 text-sm font-semibold text-[#27412f]">{t.chatTitle}<p className="mt-1 text-xs font-normal leading-5 text-[#71806b]">{t.chatText}</p></div><AIChatBox messages={messages} onSendMessage={send} isLoading={chat.isPending} height="360px" placeholder={locale === "ar" ? `اسأل ${assistantName}…` : locale === "de" ? `Frage ${assistantName}…` : `Ask ${assistantName}…`} suggestedPrompts={locale === "ar" ? ["أي مستوى أختار؟", "ما محتوى كتاب A1.1؟"] : locale === "de" ? ["Welches Niveau passt?", "Was enthält A1.1?"] : ["Which level should I choose?", "What is in A1.1?"]} /></>}</div><Button onClick={() => setChatOpen(value => !value)} className="h-14 rounded-full bg-[#b45b43] px-5 shadow-xl hover:bg-[#9c4b37]"><Sparkles className="size-4" />{chatOpen ? "Close" : t.assistant}</Button></div>
-  </main>;
+      {shareNotice && (
+        <div
+          className="fixed bottom-5 start-5 z-[80] rounded-full bg-[#10283f] px-4 py-3 text-xs font-semibold text-white shadow-xl"
+          role="status"
+        >
+          {shareNotice}
+        </div>
+      )}
+      <div className="fixed bottom-5 end-5 z-[70] flex flex-col items-end gap-3">
+        <div className="w-[min(24rem,calc(100vw-2.5rem))] overflow-hidden rounded-[1.6rem] bg-white shadow-2xl">
+          {chatOpen && (
+            <>
+              <div className="flex items-center justify-between bg-[#10283f] px-5 py-4 text-white">
+                <div>
+                  <strong className="font-display text-lg">
+                    {assistantName}
+                  </strong>
+                  <p className="text-[10px] tracking-[.15em] text-[#c8edf1]">
+                    AI STUDY ASSISTANT
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setChatOpen(false)}
+                  aria-label="Close assistant"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+              <div className="px-5 pt-3 text-sm font-semibold text-[#10283f]">
+                {t.chatTitle}
+                <p className="mt-1 text-xs font-normal leading-5 text-[#71806b]">
+                  {t.chatText}
+                </p>
+              </div>
+              <AIChatBox
+                messages={messages}
+                onSendMessage={send}
+                isLoading={chat.isPending}
+                height="360px"
+                placeholder={
+                  locale === "ar"
+                    ? `اسأل ${assistantName}…`
+                    : locale === "de"
+                      ? `Frage ${assistantName}…`
+                      : `Ask ${assistantName}…`
+                }
+                suggestedPrompts={
+                  locale === "ar"
+                    ? ["أي مستوى أختار؟", "ما محتوى كتاب A1.1؟"]
+                    : locale === "de"
+                      ? ["Welches Niveau passt?", "Was enthält A1.1?"]
+                      : ["Which level should I choose?", "What is in A1.1?"]
+                }
+              />
+            </>
+          )}
+        </div>
+        <Button
+          onClick={() => setChatOpen(value => !value)}
+          className="h-14 rounded-full bg-[#e07a5f] px-5 shadow-xl hover:bg-[#9c4b37]"
+        >
+          <Sparkles className="size-4" />
+          {chatOpen ? "Close" : t.assistant}
+        </Button>
+      </div>
+    </main>
+  );
 }

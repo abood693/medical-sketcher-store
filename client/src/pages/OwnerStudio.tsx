@@ -132,20 +132,71 @@ export default function OwnerStudio() {
 
   if (loading)
     return (
-      <div className="grid min-h-screen place-items-center bg-[#f4f1e9] text-[#283b25]">
+      <div className="grid min-h-screen place-items-center bg-[#f4f1e9] text-[#10283f]">
         Loading owner studio…
       </div>
     );
   if (!isAuthenticated)
     return (
       <div className="grid min-h-screen place-items-center bg-[#f4f1e9] px-6">
-        <form onSubmit={async event => { event.preventDefault(); setLoggingIn(true); setLoginError(""); try { const response = await fetch("/api/local-admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) }); if (!response.ok) { const data = await response.json().catch(() => ({})); throw new Error(data.error || "Sign in failed"); } window.location.reload(); } catch (error) { setLoginError(error instanceof Error ? error.message : "Sign in failed"); } finally { setLoggingIn(false); } }} className="max-w-md rounded-[2rem] bg-white p-10 text-center shadow-xl">
+        <form
+          onSubmit={async event => {
+            event.preventDefault();
+            setLoggingIn(true);
+            setLoginError("");
+            try {
+              const response = await fetch("/api/local-admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+              });
+              if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.error || "Sign in failed");
+              }
+              window.location.reload();
+            } catch (error) {
+              setLoginError(
+                error instanceof Error ? error.message : "Sign in failed"
+              );
+            } finally {
+              setLoggingIn(false);
+            }
+          }}
+          className="max-w-md rounded-[2rem] bg-white p-10 text-center shadow-xl"
+        >
           <ShieldCheck className="mx-auto mb-5 size-12 text-[#556b2f]" />
           <h1 className="font-display text-3xl font-bold">Owner access</h1>
-          <p className="mt-3 text-sm text-[#667064]">Sign in with the owner account to administer the platform.</p>
-          <div className="mt-6 grid gap-3 text-left"><Input aria-label="Username" value={username} onChange={event => setUsername(event.target.value)} placeholder="Username" autoComplete="username" /><Input aria-label="Password" value={password} onChange={event => setPassword(event.target.value)} placeholder="Password" type="password" autoComplete="current-password" /></div>
-          {loginError && <p className="mt-3 text-sm text-[#8d4133]">{loginError}</p>}
-          <Button type="submit" disabled={loggingIn} className="mt-6 rounded-full bg-[#283b25] px-7">{loggingIn ? "Signing in…" : "Sign in"}</Button>
+          <p className="mt-3 text-sm text-[#607487]">
+            Sign in with the owner account to administer the platform.
+          </p>
+          <div className="mt-6 grid gap-3 text-left">
+            <Input
+              aria-label="Username"
+              value={username}
+              onChange={event => setUsername(event.target.value)}
+              placeholder="Username"
+              autoComplete="username"
+            />
+            <Input
+              aria-label="Password"
+              value={password}
+              onChange={event => setPassword(event.target.value)}
+              placeholder="Password"
+              type="password"
+              autoComplete="current-password"
+            />
+          </div>
+          {loginError && (
+            <p className="mt-3 text-sm text-[#8d4133]">{loginError}</p>
+          )}
+          <Button
+            type="submit"
+            disabled={loggingIn}
+            className="mt-6 rounded-full bg-[#10283f] px-7"
+          >
+            {loggingIn ? "Signing in…" : "Sign in"}
+          </Button>
         </form>
       </div>
     );
@@ -155,7 +206,7 @@ export default function OwnerStudio() {
         <div className="max-w-md rounded-[2rem] bg-white p-10 text-center shadow-xl">
           <ShieldCheck className="mx-auto mb-5 size-12 text-[#8d4133]" />
           <h1 className="font-display text-3xl font-bold">Owner access only</h1>
-          <p className="mt-3 text-sm text-[#667064]">
+          <p className="mt-3 text-sm text-[#607487]">
             This account does not have administrator permission.
           </p>
           <Link href="/">
@@ -208,7 +259,7 @@ export default function OwnerStudio() {
 
   return (
     <main className="min-h-screen bg-[#f4f1e9] text-[#1d281c]">
-      <header className="border-b border-[#283b25]/10 bg-[#fffdf7]">
+      <header className="border-b border-[#10283f]/10 bg-[#ffffff]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
           <Link
             href="/"
@@ -219,14 +270,14 @@ export default function OwnerStudio() {
           <span className="font-display text-xl font-bold">
             medical.sketcher owner studio
           </span>
-          <span className="text-sm text-[#667064]">
+          <span className="text-sm text-[#607487]">
             {user?.name ?? "Owner"}
           </span>
         </div>
       </header>
       <div className="mx-auto max-w-7xl px-5 py-8">
         <div className="grid gap-7 lg:grid-cols-[16rem_1fr]">
-          <aside className="rounded-[1.8rem] bg-[#253c2a] p-4 text-white shadow-xl">
+          <aside className="rounded-[1.8rem] bg-[#10283f] p-4 text-white shadow-xl">
             <div className="border-b border-white/15 px-3 pb-5">
               <p className="text-[10px] font-bold tracking-[.18em] text-[#c9d9aa]">
                 CONTROL CENTER
@@ -242,7 +293,7 @@ export default function OwnerStudio() {
                   <button
                     key={item.id}
                     onClick={() => setPanel(item.id)}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${panel === item.id ? "bg-[#dce6c8] text-[#253c2a]" : "text-[#e8eddf] hover:bg-white/10"}`}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${panel === item.id ? "bg-[#c8edf1] text-[#10283f]" : "text-[#e8eddf] hover:bg-white/10"}`}
                   >
                     <Icon className="size-4" />
                     {item.label}
@@ -261,21 +312,21 @@ export default function OwnerStudio() {
             {panel === "overview" && (
               <div className="space-y-7">
                 <div className="rounded-[2rem] bg-white p-8 shadow-[0_18px_60px_rgba(40,59,37,.10)]">
-                  <p className="text-xs font-bold tracking-[.18em] text-[#89966d]">
+                  <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
                     OWNER OVERVIEW
                   </p>
                   <h2 className="mt-3 font-display text-4xl font-bold">
                     Everything you need, in one place.
                   </h2>
-                  <p className="mt-4 max-w-2xl leading-7 text-[#667064]">
+                  <p className="mt-4 max-w-2xl leading-7 text-[#607487]">
                     Use this studio to prepare course levels, build assessments,
                     guide the AI assistant and connect to real sales management.
                     Publishing a book or assessment should happen only after its
                     content is ready.
                   </p>
                   <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-2xl bg-[#eef1e4] p-5">
-                      <BookOpen className="size-5 text-[#536d37]" />
+                    <div className="rounded-2xl bg-[#eaf4f6] p-5">
+                      <BookOpen className="size-5 text-[#16849a]" />
                       <strong className="mt-5 block font-display text-3xl">
                         {publishedCount}/6
                       </strong>
@@ -293,7 +344,7 @@ export default function OwnerStudio() {
                       </span>
                     </div>
                     <div className="rounded-2xl bg-[#e6ece0] p-5">
-                      <Bot className="size-5 text-[#536d37]" />
+                      <Bot className="size-5 text-[#16849a]" />
                       <strong className="mt-5 block font-display text-xl">
                         {assistantDraft.name}
                       </strong>
@@ -332,7 +383,7 @@ export default function OwnerStudio() {
                   ].map(([number, title, body]) => (
                     <div
                       key={number}
-                      className="rounded-[1.5rem] border border-[#283b25]/10 bg-white p-6"
+                      className="rounded-[1.5rem] border border-[#10283f]/10 bg-white p-6"
                     >
                       <span className="font-display text-4xl font-black text-[#d1dbba]">
                         {number}
@@ -340,7 +391,7 @@ export default function OwnerStudio() {
                       <h3 className="mt-6 font-display text-2xl font-bold">
                         {title}
                       </h3>
-                      <p className="mt-3 text-sm leading-6 text-[#667064]">
+                      <p className="mt-3 text-sm leading-6 text-[#607487]">
                         {body}
                       </p>
                     </div>
@@ -352,21 +403,21 @@ export default function OwnerStudio() {
               <div className="rounded-[2rem] bg-white p-7 shadow-[0_18px_60px_rgba(40,59,37,.10)]">
                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                   <div>
-                    <p className="text-xs font-bold tracking-[.18em] text-[#89966d]">
+                    <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
                       BOOKS & LEVELS
                     </p>
                     <h2 className="mt-2 font-display text-4xl font-bold">
                       Control the learning shelves.
                     </h2>
                   </div>
-                  <p className="max-w-xs text-sm leading-6 text-[#667064]">
+                  <p className="max-w-xs text-sm leading-6 text-[#607487]">
                     A level can be hidden, held as coming soon, or marked
                     published after its content is ready.
                   </p>
                 </div>
                 <div className="mt-8 grid gap-4">
                   {shelves.isLoading ? (
-                    <p className="py-10 text-center text-[#667064]">
+                    <p className="py-10 text-center text-[#607487]">
                       Loading levels…
                     </p>
                   ) : (
@@ -379,11 +430,11 @@ export default function OwnerStudio() {
                       return (
                         <article
                           key={shelf.id}
-                          className="rounded-[1.5rem] border border-[#283b25]/10 bg-[#f8f6ee] p-5"
+                          className="rounded-[1.5rem] border border-[#10283f]/10 bg-[#f8f6ee] p-5"
                         >
                           <div className="grid gap-4 md:grid-cols-[7rem_1fr_10rem_auto]">
                             <div>
-                              <p className="text-[10px] font-bold tracking-[.15em] text-[#89966d]">
+                              <p className="text-[10px] font-bold tracking-[.15em] text-[#16849a]">
                                 SHELF
                               </p>
                               <strong className="font-display text-3xl">
@@ -430,7 +481,7 @@ export default function OwnerStudio() {
                                   },
                                 }))
                               }
-                              className="h-10 rounded-md border border-[#283b25]/15 bg-white px-3 text-sm font-semibold"
+                              className="h-10 rounded-md border border-[#10283f]/15 bg-white px-3 text-sm font-semibold"
                             >
                               <option value="coming_soon">Coming soon</option>
                               <option value="published">Published</option>
@@ -439,7 +490,7 @@ export default function OwnerStudio() {
                             <Button
                               onClick={() => saveShelf(shelf.id)}
                               disabled={updateShelf.isPending}
-                              className="rounded-full bg-[#253c2a]"
+                              className="rounded-full bg-[#10283f]"
                             >
                               <Save className="mr-2 size-4" />
                               Save
@@ -456,14 +507,14 @@ export default function OwnerStudio() {
               <div className="rounded-[2rem] bg-white p-7 shadow-[0_18px_60px_rgba(40,59,37,.10)]">
                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                   <div>
-                    <p className="text-xs font-bold tracking-[.18em] text-[#89966d]">
+                    <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
                       ASSESSMENTS
                     </p>
                     <h2 className="mt-2 font-display text-4xl font-bold">
                       Build questions with control.
                     </h2>
                   </div>
-                  <p className="max-w-xs text-sm leading-6 text-[#667064]">
+                  <p className="max-w-xs text-sm leading-6 text-[#607487]">
                     Only add questions after reviewing the book content. The
                     public assessment area stays coming soon until you activate
                     it.
@@ -474,7 +525,7 @@ export default function OwnerStudio() {
                     <button
                       key={item}
                       onClick={() => setLevel(item)}
-                      className={`rounded-full px-4 py-2 text-sm font-bold transition ${level === item ? "bg-[#536d37] text-white" : "bg-[#eef0e6] text-[#53604b]"}`}
+                      className={`rounded-full px-4 py-2 text-sm font-bold transition ${level === item ? "bg-[#16849a] text-white" : "bg-[#eef0e6] text-[#53604b]"}`}
                     >
                       {item}
                     </button>
@@ -506,14 +557,14 @@ export default function OwnerStudio() {
                   <Button
                     onClick={addQuestion}
                     disabled={createQuestion.isPending}
-                    className="w-fit rounded-full bg-[#253c2a]"
+                    className="w-fit rounded-full bg-[#10283f]"
                   >
                     <Plus className="mr-2 size-4" />
                     Add question
                   </Button>
                 </div>
                 <div className="mt-7 space-y-3">
-                  <h3 className="text-sm font-bold uppercase tracking-[.14em] text-[#89966d]">
+                  <h3 className="text-sm font-bold uppercase tracking-[.14em] text-[#16849a]">
                     Current {level} questions
                   </h3>
                   {questions.data?.map((question, index) => (
@@ -526,7 +577,7 @@ export default function OwnerStudio() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="font-medium">{question.prompt}</p>
-                        <p className="mt-1 text-xs text-[#667064]">
+                        <p className="mt-1 text-xs text-[#607487]">
                           Correct: {question.choices[question.correctIndex]}
                         </p>
                       </div>
@@ -551,13 +602,13 @@ export default function OwnerStudio() {
             {panel === "assistant" && (
               <div className="rounded-[2rem] bg-white p-7 shadow-[0_18px_60px_rgba(40,59,37,.10)]">
                 <div>
-                  <p className="text-xs font-bold tracking-[.18em] text-[#89966d]">
+                  <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
                     AI ASSISTANT
                   </p>
                   <h2 className="mt-2 font-display text-4xl font-bold">
                     Shape how your assistant helps.
                   </h2>
-                  <p className="mt-3 max-w-2xl leading-7 text-[#667064]">
+                  <p className="mt-3 max-w-2xl leading-7 text-[#607487]">
                     These settings control the assistant identity, its opening
                     message and its general support scope. Keep the scope
                     focused on navigation and learning support, not medical or
@@ -609,7 +660,7 @@ export default function OwnerStudio() {
                   <Button
                     onClick={() => updateAssistant.mutate(assistantDraft)}
                     disabled={updateAssistant.isPending}
-                    className="w-fit rounded-full bg-[#253c2a]"
+                    className="w-fit rounded-full bg-[#10283f]"
                   >
                     <Sparkles className="mr-2 size-4" />
                     Save assistant settings
@@ -621,59 +672,60 @@ export default function OwnerStudio() {
               <>
                 <ProductManager />
                 <div className="rounded-[2rem] bg-white p-7 shadow-[0_18px_60px_rgba(40,59,37,.10)]">
-                <p className="text-xs font-bold tracking-[.18em] text-[#89966d]">
-                  SALES & PAYMENTS
-                </p>
-                <h2 className="mt-2 font-display text-4xl font-bold">
-                  Manage real sales through the store.
-                </h2>
-                <p className="mt-4 max-w-2xl leading-7 text-[#667064]">
-                  Products, prices, checkout, orders and payment providers are
-                  managed in the connected Shopify store. This separation keeps
-                  payment credentials and customer payment data out of the
-                  learning website.
-                </p>
-                <div className="mt-8 grid gap-4 md:grid-cols-3">
-                  <div className="rounded-2xl bg-[#eef1e4] p-5">
-                    <BookOpen className="size-5 text-[#536d37]" />
-                    <h3 className="mt-5 font-display text-2xl font-bold">
-                      Products
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-[#667064]">
-                      Add book title, price, cover, description and level tag.
-                    </p>
+                  <p className="text-xs font-bold tracking-[.18em] text-[#16849a]">
+                    SALES & PAYMENTS
+                  </p>
+                  <h2 className="mt-2 font-display text-4xl font-bold">
+                    Manage real sales through the store.
+                  </h2>
+                  <p className="mt-4 max-w-2xl leading-7 text-[#607487]">
+                    Products, prices, checkout, orders and payment providers are
+                    managed in the connected Shopify store. This separation
+                    keeps payment credentials and customer payment data out of
+                    the learning website.
+                  </p>
+                  <div className="mt-8 grid gap-4 md:grid-cols-3">
+                    <div className="rounded-2xl bg-[#eaf4f6] p-5">
+                      <BookOpen className="size-5 text-[#16849a]" />
+                      <h3 className="mt-5 font-display text-2xl font-bold">
+                        Products
+                      </h3>
+                      <p className="mt-2 text-sm leading-6 text-[#607487]">
+                        Add book title, price, cover, description and level tag.
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-[#f4ead8] p-5">
+                      <CircleDollarSign className="size-5 text-[#a16a32]" />
+                      <h3 className="mt-5 font-display text-2xl font-bold">
+                        Payments
+                      </h3>
+                      <p className="mt-2 text-sm leading-6 text-[#607487]">
+                        Activate PayPal, Stripe Card Payments or another
+                        supported provider.
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-[#e6ece0] p-5">
+                      <ClipboardCheck className="size-5 text-[#16849a]" />
+                      <h3 className="mt-5 font-display text-2xl font-bold">
+                        Orders
+                      </h3>
+                      <p className="mt-2 text-sm leading-6 text-[#607487]">
+                        Review paid orders and fulfilment in the store
+                        dashboard.
+                      </p>
+                    </div>
                   </div>
-                  <div className="rounded-2xl bg-[#f4ead8] p-5">
-                    <CircleDollarSign className="size-5 text-[#a16a32]" />
-                    <h3 className="mt-5 font-display text-2xl font-bold">
-                      Payments
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-[#667064]">
-                      Activate PayPal, Stripe Card Payments or another supported
-                      provider.
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-[#e6ece0] p-5">
-                    <ClipboardCheck className="size-5 text-[#536d37]" />
-                    <h3 className="mt-5 font-display text-2xl font-bold">
-                      Orders
-                    </h3>
-                    <p className="mt-2 text-sm leading-6 text-[#667064]">
-                      Review paid orders and fulfilment in the store dashboard.
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  onClick={() =>
-                    toast.message(
-                      "Open Settings → Integrations → Shopify in the project panel to claim and manage the connected store."
-                    )
-                  }
-                  className="mt-7 rounded-full bg-[#253c2a]"
-                >
-                  <ExternalLink className="mr-2 size-4" />
-                  Open sales setup steps
-                </Button>
+                  <Button
+                    onClick={() =>
+                      toast.message(
+                        "Open Settings → Integrations → Shopify in the project panel to claim and manage the connected store."
+                      )
+                    }
+                    className="mt-7 rounded-full bg-[#10283f]"
+                  >
+                    <ExternalLink className="mr-2 size-4" />
+                    Open sales setup steps
+                  </Button>
                 </div>
               </>
             )}

@@ -2,6 +2,7 @@
 // Uploads via Forge Server presigned URL to S3 (PUT direct).
 // Downloads return /manus-storage/{key} paths served via 307 redirect.
 
+import crypto from "node:crypto";
 import { ENV } from "./_core/env";
 
 function hasSupabaseStorage() {
@@ -21,7 +22,7 @@ function getForgeConfig() {
 
   if (!forgeUrl || !forgeKey) {
     throw new Error(
-      "Storage config missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY",
+      "Storage config missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
     );
   }
 
@@ -42,7 +43,7 @@ function appendHashSuffix(relKey: string): string {
 export async function storagePut(
   relKey: string,
   data: Buffer | Uint8Array | string,
-  contentType = "application/octet-stream",
+  contentType = "application/octet-stream"
 ): Promise<{ key: string; url: string }> {
   if (hasSupabaseStorage()) {
     const key = appendHashSuffix(normalizeKey(relKey));
@@ -58,7 +59,9 @@ export async function storagePut(
     });
     if (!response.ok) {
       const msg = await response.text().catch(() => response.statusText);
-      throw new Error(`Supabase storage upload failed (${response.status}): ${msg}`);
+      throw new Error(
+        `Supabase storage upload failed (${response.status}): ${msg}`
+      );
     }
     return { key, url: `/supabase-storage/${key}` };
   }
@@ -100,7 +103,9 @@ export async function storagePut(
   return { key, url: `/manus-storage/${key}` };
 }
 
-export async function storageGet(relKey: string): Promise<{ key: string; url: string }> {
+export async function storageGet(
+  relKey: string
+): Promise<{ key: string; url: string }> {
   const key = normalizeKey(relKey);
   return { key, url: `/manus-storage/${key}` };
 }
@@ -121,16 +126,23 @@ export async function storageGetSignedUrl(relKey: string): Promise<string> {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ expiresIn: 60 * 60 }),
-      },
+      }
     );
     if (!response.ok) {
       const msg = await response.text().catch(() => response.statusText);
-      throw new Error(`Supabase signed URL failed (${response.status}): ${msg}`);
+      throw new Error(
+        `Supabase signed URL failed (${response.status}): ${msg}`
+      );
     }
-    const result = (await response.json()) as { signedURL?: string; signedUrl?: string };
+    const result = (await response.json()) as {
+      signedURL?: string;
+      signedUrl?: string;
+    };
     const signed = result.signedURL ?? result.signedUrl;
     if (!signed) throw new Error("Supabase returned an empty signed URL");
-    return signed.startsWith("http") ? signed : `${ENV.supabaseUrl.replace(/\/+$/, "")}/storage/v1${signed}`;
+    return signed.startsWith("http")
+      ? signed
+      : `${ENV.supabaseUrl.replace(/\/+$/, "")}/storage/v1${signed}`;
   }
   const { forgeUrl, forgeKey } = getForgeConfig();
   const key = normalizeKey(relKey);

@@ -42,7 +42,9 @@ export function getSessionCookieOptions(
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "lax",
+    // OAuth redirects are cross-site in production; secure cookies need SameSite=None.
+    // Keep lax for plain local HTTP where browsers reject SameSite=None cookies.
+    sameSite: isSecureRequest(req) ? "none" : "lax",
     secure: isSecureRequest(req),
   };
 }

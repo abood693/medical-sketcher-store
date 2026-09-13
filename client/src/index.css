@@ -5,29 +5,29 @@
 @theme inline {
   --font-sans: "DM Sans", "Noto Kufi Arabic", sans-serif;
   --font-display: "Fraunces", "Noto Kufi Arabic", serif;
-  --color-background: #f8f5eb;
-  --color-foreground: #1d2a1d;
-  --color-card: #fffdf7;
-  --color-card-foreground: #1d2a1d;
-  --color-popover: #fffdf7;
-  --color-popover-foreground: #1d2a1d;
-  --color-primary: #253c2a;
+  --color-background: #f4f8fa;
+  --color-foreground: #10283f;
+  --color-card: #ffffff;
+  --color-card-foreground: #10283f;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #10283f;
+  --color-primary: #10283f;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #e8eadf;
-  --color-secondary-foreground: #1d2a1d;
-  --color-muted: #eef1e4;
-  --color-muted-foreground: #69735f;
-  --color-accent: #dce6c8;
-  --color-accent-foreground: #1d2a1d;
-  --color-border: #d9ddcd;
-  --color-input: #d9ddcd;
-  --color-ring: #536d37;
-  --radius: .7rem;
+  --color-secondary: #e8f2f5;
+  --color-secondary-foreground: #10283f;
+  --color-muted: #edf4f6;
+  --color-muted-foreground: #607487;
+  --color-accent: #c8edf1;
+  --color-accent-foreground: #10283f;
+  --color-border: #dce8ed;
+  --color-input: #dce8ed;
+  --color-ring: #16849a;
+  --radius: 1rem;
 }
 
 @layer base {
   * { @apply border-border; }
-  html { scroll-behavior: smooth; background: #f8f5eb; }
+  html { scroll-behavior: smooth; background: #f4f8fa; }
   body { @apply bg-background text-foreground font-sans antialiased; }
   button, a { -webkit-tap-highlight-color: transparent; }
   button { cursor: pointer; }
@@ -36,49 +36,40 @@
 
 @media (prefers-reduced-motion: no-preference) {
   :root { --ease-out: cubic-bezier(.23,1,.32,1); }
-  html { scroll-behavior: smooth; }
   button, a { transition-timing-function: var(--ease-out); transition-duration: 180ms; transition-property: color, background-color, border-color, box-shadow, transform, opacity; }
   button:active { transform: scale(.97); }
-  .motion-reveal { opacity: 0; transform: translateY(28px); transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out); }
+  .motion-reveal { opacity: 0; transform: translateY(24px); transition: opacity 560ms var(--ease-out), transform 560ms var(--ease-out); }
   .motion-reveal.is-visible { opacity: 1; transform: translateY(0); }
-  .motion-reveal[data-reveal="hero"] { transform: translateY(18px); }
+  .motion-reveal[data-reveal="hero"] { transform: translateY(16px); }
   .motion-reveal[data-reveal="hero"].is-visible { transform: translateY(0); }
-  [data-reveal="card"] { transition-delay: 70ms; }
-  [data-reveal="card"]:nth-child(2n) { transition-delay: 120ms; }
-  [data-reveal="card"]:nth-child(3n) { transition-delay: 170ms; }
+  [data-reveal="card"] { transition-delay: 60ms; }
+  [data-reveal="card"]:nth-child(2n) { transition-delay: 110ms; }
+  [data-reveal="card"]:nth-child(3n) { transition-delay: 160ms; }
   .motion-lift { transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out), background-color 220ms var(--ease-out); }
-  .motion-lift:hover { transform: translateY(-6px); box-shadow: 0 24px 54px rgba(39, 65, 47, .14); }
-  .motion-lift:focus-visible { outline: 3px solid rgba(83, 109, 55, .42); outline-offset: 4px; }
+  .motion-lift:hover { transform: translateY(-6px); box-shadow: 0 24px 54px rgba(16, 40, 63, .13); }
+  .motion-lift:focus-visible { outline: 3px solid rgba(22, 132, 154, .35); outline-offset: 4px; }
   .motion-image { transition: transform 700ms var(--ease-out), filter 700ms var(--ease-out); }
-  .motion-image:hover { transform: scale(1.018) rotate(-.4deg); filter: saturate(1.05); }
+  .motion-image:hover { transform: scale(1.02) rotate(-.4deg); filter: saturate(1.05); }
 }
 
-.dark {
-  color-scheme: dark;
-}
+/* Modern medical palette for legacy utility classes retained by the feature pages. */
+html:not(.dark) main { background-color: #f4f8fa; }
+html:not(.dark) main > section#home,
+html:not(.dark) main > section#method,
+html:not(.dark) main > section#order,
+html:not(.dark) main > section#tests { background-color: #f4f8fa !important; }
+html:not(.dark) main > section#books { background-color: #eaf4f6 !important; }
+html:not(.dark) main > section#feedback { background-color: #d9f0f1 !important; }
+html:not(.dark) nav { background-color: rgba(244,248,250,.90) !important; }
 
-html.dark body { background: #132119; color: #edf1e7; }
-html.dark main { background: #132119 !important; color: #edf1e7; }
-html.dark main > section#home,
-html.dark main > section#method,
-html.dark main > section#order,
-html.dark main > section#tests { background: #132119 !important; }
-html.dark main > section#books { background: #1b3024 !important; }
-html.dark main > section#feedback { background: #294a37 !important; }
-html.dark nav { background: rgba(26, 45, 34, .92) !important; border-color: rgba(201, 217, 199, .16) !important; color: #edf1e7; }
-html.dark nav a, html.dark nav strong, html.dark nav small { color: #edf1e7; }
-html.dark main [class*="bg-\[#fffdf7\]"],
-html.dark main [class*="bg-white"] { background: #1f3026 !important; border-color: rgba(201, 217, 199, .15); }
-html.dark main section p { color: #c3d0c1; }
-html.dark main section h1,
-html.dark main section h2,
-html.dark main section h3,
-html.dark main section h4 { color: #edf1e7; }
-html.dark main section [class*="bg-white"] p,
-html.dark main section [class*="bg-\[#fffdf7\]"] p { color: #687360; }
-html.dark input,
-html.dark textarea,
-html.dark select { color: #edf1e7; }
+.dark { color-scheme: dark; }
+html.dark body, html.dark main { background: #0b1b2a !important; color: #edf7fa; }
+html.dark nav { background: rgba(11, 27, 42, .92) !important; border-color: rgba(196, 232, 238, .16) !important; color: #edf7fa; }
+html.dark nav a, html.dark nav strong, html.dark nav small { color: #edf7fa; }
+html.dark main [class*="bg-white"], html.dark main [class*="bg-[#fffdf7]"] { background: #132c3d !important; border-color: rgba(196, 232, 238, .15); }
+html.dark main section p { color: #bdd2db; }
+html.dark main section h1, html.dark main section h2, html.dark main section h3, html.dark main section h4 { color: #edf7fa; }
+html.dark input, html.dark textarea, html.dark select { color: #edf7fa; background: #132c3d; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

@@ -23,8 +23,15 @@ export const digitalProductsRouter = router({
   demoCheckout: publicProcedure.mutation(async () => {
     // PayPal Checkout does not support JOD. The storefront price remains 5 JOD;
     // Sandbox checkout uses a clearly-labelled USD equivalent for testing.
-    const paypal = await createPaypalOrder({ orderReference: "german-for-nurse-a1-1", amountCents: 700, currency: "USD" });
-    return { approvalUrl: paypal.links?.find(link => link.rel === "approve")?.href ?? null };
+    const paypal = await createPaypalOrder({
+      orderReference: "german-for-nurse-a1-1",
+      amountCents: 700,
+      currency: "USD",
+    });
+    return {
+      approvalUrl:
+        paypal.links?.find(link => link.rel === "approve")?.href ?? null,
+    };
   }),
   adminList: adminProcedure.query(() => listAllProducts()),
   adminCreate: adminProcedure
@@ -81,6 +88,8 @@ export const digitalProductsRouter = router({
         input.base64.replace(/^data:application\/pdf;base64,/, ""),
         "base64"
       );
+      if (data.length > 100 * 1024 * 1024)
+        throw new Error("PDF files must be smaller than 100 MB");
       if (data.subarray(0, 4).toString() !== "%PDF")
         throw new Error("Only valid PDF files are allowed");
       return storagePut(

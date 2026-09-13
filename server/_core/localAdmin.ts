@@ -29,11 +29,16 @@ export function registerLocalAdminRoute(app: Express) {
     ].filter(Boolean);
     if (missing.length > 0) {
       res.status(503).json({
-        error: `Owner login is not configured. Missing: ${missing.join(", ")}`,
+        error: `Owner login is not configured. Missing: ${missing.join(", ")}. Set these values in the deployment secrets, then restart the server.`,
       });
       return;
     }
-    if (typeof username !== "string" || typeof password !== "string" || username.trim() !== ENV.adminUsername.trim() || !verifyPassword(password, ENV.adminPasswordHash)) {
+    if (
+      typeof username !== "string" ||
+      typeof password !== "string" ||
+      username.trim() !== ENV.adminUsername.trim() ||
+      !verifyPassword(password, ENV.adminPasswordHash)
+    ) {
       res.status(401).json({ error: "Invalid username or password" });
       return;
     }
@@ -47,17 +52,28 @@ export function registerLocalAdminRoute(app: Express) {
         lastSignedIn: new Date(),
       });
     } catch (error) {
-      console.error("[LocalAdmin] Failed to save owner in the database:", error);
+      console.error(
+        "[LocalAdmin] Failed to save owner in the database:",
+        error
+      );
       res.status(503).json({ error: "Owner database is not available" });
       return;
     }
     try {
-      const token = await sdk.createSessionToken(openId, { name: username.trim(), expiresInMs: ONE_YEAR_MS });
-      res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });
+      const token = await sdk.createSessionToken(openId, {
+        name: username.trim(),
+        expiresInMs: ONE_YEAR_MS,
+      });
+      res.cookie(COOKIE_NAME, token, {
+        ...getSessionCookieOptions(req),
+        maxAge: ONE_YEAR_MS,
+      });
       res.json({ success: true });
     } catch (error) {
       console.error("[LocalAdmin] Failed to create owner session:", error);
-      res.status(503).json({ error: "Owner session is not configured. Check JWT_SECRET" });
+      res
+        .status(503)
+        .json({ error: "Owner session is not configured. Check JWT_SECRET" });
     }
   });
 }
