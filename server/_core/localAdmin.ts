@@ -26,7 +26,7 @@ export function registerLocalAdminRoute(app: Express) {
       res.status(401).json({ error: "Invalid username or password" });
       return;
     }
-    const openId = ENV.ownerOpenId || "local-admin";
+    const openId = "local-admin";
     await db.upsertUser({ openId, name: username, loginMethod: "local-password", lastSignedIn: new Date() });
     const token = await sdk.createSessionToken(openId, { name: username, expiresInMs: ONE_YEAR_MS });
     res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });

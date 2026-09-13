@@ -278,7 +278,7 @@ class SDKServer {
 
     // Local owner accounts are authenticated by the dedicated password route.
     // Keep this path independent from Manus OAuth and from an optional DB row.
-    if (session.openId === "local-admin" && ENV.ownerOpenId === "local-admin") {
+    if (session.openId === "local-admin") {
       const now = new Date();
       return {
         id: -1,

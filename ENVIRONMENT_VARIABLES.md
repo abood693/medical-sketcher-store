@@ -15,6 +15,10 @@ VITE_OAUTH_PORTAL_URL=https://auth.manus.im
 OWNER_OPEN_ID=owner_open_id_from_manus_oauth
 OWNER_NAME=Company Owner
 
+# Local owner login used by /admin and /owner-studio
+ADMIN_USERNAME=your_owner_username
+ADMIN_PASSWORD_HASH=generated_salt_and_hash
+
 BUILT_IN_FORGE_API_URL=https://forge.manus.im
 BUILT_IN_FORGE_API_KEY=server_side_api_key
 
@@ -41,6 +45,14 @@ VITE_ANALYTICS_ENDPOINT=
 VITE_ANALYTICS_WEBSITE_ID=
 ```
 
-`DATABASE_URL`, `JWT_SECRET`, `VITE_APP_ID`, `OAUTH_SERVER_URL`, `OWNER_OPEN_ID`, `BUILT_IN_FORGE_API_URL`, and `BUILT_IN_FORGE_API_KEY` are required for a complete production setup. Shopify and analytics variables are optional for the current Instagram Direct ordering flow.
+`DATABASE_URL`, `JWT_SECRET`, `VITE_APP_ID`, `OAUTH_SERVER_URL`, `OWNER_OPEN_ID`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD_HASH` are required for the local owner login. `BUILT_IN_FORGE_API_URL` and `BUILT_IN_FORGE_API_KEY` are required only when Supabase Storage is not configured. Shopify and analytics variables are optional for the current Instagram Direct ordering flow.
+
+Generate the password hash locally without putting the password in the repository:
+
+```bash
+pnpm admin:hash
+```
+
+Copy the printed `ADMIN_PASSWORD_HASH` value into the deployment platform's secret manager. Set `ADMIN_USERNAME` to the username you want to use on `/admin`.
 
 Use a long, randomly generated `JWT_SECRET`. The production database must be MySQL-compatible, and the OAuth application must allow the final HTTPS domain and callback path. Values beginning with `VITE_` can be exposed to the browser by the build system; never place server-only secrets in a `VITE_` variable.
