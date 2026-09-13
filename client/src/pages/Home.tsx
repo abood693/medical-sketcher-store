@@ -428,11 +428,11 @@ const shelves: Array<{
 
 // These are public, stable image URLs so the storefront does not depend on the
 // private Manus workspace storage paths that are unavailable on Render.
-const heroCharacter = "/medical-sketcher-hero-new.png";
+const heroCharacter = "/medical-sketcher-hero.jpg";
 const bookFallback =
   "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=85";
-const lessonArt = "/medical-sketcher-method-new.png";
-const studyArt = "/medical-sketcher-study-new.png";
+const lessonArt = "/medical-sketcher-method.jpg";
+const studyArt = "/medical-sketcher-study-scene.jpg";
 const a11Book = {
   id: "a1-1-instagram-book",
   title: "German for Nurse A1.1",
