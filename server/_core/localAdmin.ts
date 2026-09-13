@@ -7,12 +7,17 @@ import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
 
 function verifyPassword(password: string, encoded: string) {
-  const [salt, expected] = encoded.split(":");
+  const normalized = encoded.trim().replace(/^ADMIN_PASSWORD_HASH=/, "");
+  const [salt, expected] = normalized.split(":");
   if (!salt || !expected) return false;
-  const actual = crypto.scryptSync(password, salt, 64).toString("hex");
-  const a = Buffer.from(actual, "hex");
-  const b = Buffer.from(expected, "hex");
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
+  try {
+    const actual = crypto.scryptSync(password, salt, 64).toString("hex");
+    const a = Buffer.from(actual, "hex");
+    const b = Buffer.from(expected, "hex");
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
 }
 
 export function registerLocalAdminRoute(app: Express) {
@@ -28,7 +33,7 @@ export function registerLocalAdminRoute(app: Express) {
       });
       return;
     }
-    if (typeof username !== "string" || typeof password !== "string" || username !== ENV.adminUsername || !verifyPassword(password, ENV.adminPasswordHash)) {
+    if (typeof username !== "string" || typeof password !== "string" || username.trim() !== ENV.adminUsername.trim() || !verifyPassword(password, ENV.adminPasswordHash)) {
       res.status(401).json({ error: "Invalid username or password" });
       return;
     }
@@ -46,8 +51,13 @@ export function registerLocalAdminRoute(app: Express) {
       res.status(503).json({ error: "Owner database is not available" });
       return;
     }
-    const token = await sdk.createSessionToken(openId, { name: username, expiresInMs: ONE_YEAR_MS });
-    res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });
-    res.json({ success: true });
+    try {
+      const token = await sdk.createSessionToken(openId, { name: username.trim(), expiresInMs: ONE_YEAR_MS });
+      res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(req), maxAge: ONE_YEAR_MS });
+      res.json({ success: true });
+    } catch (error) {
+      console.error("[LocalAdmin] Failed to create owner session:", error);
+      res.status(503).json({ error: "Owner session is not configured. Check JWT_SECRET" });
+    }
   });
 }
