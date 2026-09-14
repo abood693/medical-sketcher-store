@@ -76,3 +76,64 @@ html.dark input, html.dark textarea, html.dark select { color: #edf7fa; backgrou
   .motion-reveal { opacity: 1; transform: none; }
   .motion-lift, .motion-image { transition: none; }
 }
+
+/* ReBook-inspired editorial layer: cream paper, olive ink, and warm terracotta accents. */
+@theme inline {
+  --color-background: #f4efe4;
+  --color-foreground: #26351f;
+  --color-card: #fffdf8;
+  --color-card-foreground: #26351f;
+  --color-primary: #394b2b;
+  --color-primary-foreground: #fffdf8;
+  --color-secondary: #e7ead8;
+  --color-secondary-foreground: #26351f;
+  --color-muted: #eee9dc;
+  --color-muted-foreground: #69715e;
+  --color-accent: #d0d9b8;
+  --color-accent-foreground: #26351f;
+  --color-border: #d9d7c7;
+  --color-input: #d9d7c7;
+  --color-ring: #76864a;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root { --ease-in-out: cubic-bezier(.77,0,.175,1); }
+  .motion-image { transform-style: preserve-3d; }
+  .motion-reveal.is-visible .motion-image { animation: editorialFlip 820ms var(--ease-out) both; }
+  .motion-reveal.is-visible [data-reveal="card"] { animation: cardRise 620ms var(--ease-out) both; }
+  @keyframes editorialFlip { from { opacity: 0; transform: perspective(900px) rotateY(-13deg) translateY(18px); } to { opacity: 1; transform: perspective(900px) rotateY(0) translateY(0); } }
+  @keyframes cardRise { from { opacity: 0; transform: translateY(14px) rotate(.6deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+}
+html:not(.dark), html:not(.dark) body, html:not(.dark) main { background-color: #f4efe4 !important; color: #26351f; }
+html:not(.dark) nav { background-color: rgba(244, 239, 228, .92) !important; border-color: rgba(57, 75, 43, .13) !important; }
+html:not(.dark) main > section#home { background-color: #f4efe4 !important; }
+html:not(.dark) main > section#levels { background-color: #394b2b !important; }
+html:not(.dark) main > section#method { background-color: #f4efe4 !important; }
+html:not(.dark) main > section#books { background-color: #e8e8d9 !important; }
+html:not(.dark) main > section#tests { background-color: #f4efe4 !important; }
+html:not(.dark) main > section#feedback { background-color: #dfe4cc !important; }
+html:not(.dark) [class*="bg-[#10283f]"] { background-color: #394b2b !important; }
+html:not(.dark) [class*="bg-[#16849a]"] { background-color: #76864a !important; }
+html:not(.dark) [class*="bg-[#c8edf1]"] { background-color: #d0d9b8 !important; }
+html:not(.dark) [class*="bg-[#eaf4f6]"], html:not(.dark) [class*="bg-[#f4f8fa]"] { background-color: #eee9dc !important; }
+html:not(.dark) [class*="bg-[#d9f0f1]"] { background-color: #dfe4cc !important; }
+html:not(.dark) [class*="text-[#10283f]"], html:not(.dark) [class*="text-[#1d2a1d]"] { color: #26351f !important; }
+html:not(.dark) [class*="text-[#16849a]"] { color: #65763f !important; }
+html:not(.dark) [class*="text-[#e07a5f]"] { color: #a96045 !important; }
+html:not(.dark) [class*="border-[#10283f"] { border-color: rgba(57, 75, 43, .18) !important; }
+html:not(.dark) [class*="border-[#16849a"] { border-color: rgba(118, 134, 74, .35) !important; }
+html:not(.dark) [class*="hover:bg-[#176b7d]"]:hover { background-color: #526b37 !important; }
+html:not(.dark) main.min-h-screen.bg-\[\#f4f1e9\] { background: #f4efe4 !important; }
+html:not(.dark) main.min-h-screen.bg-\[\#f4f1e9\] aside { background: #394b2b !important; }
+.dark { color-scheme: dark; }
+html.dark body, html.dark main { background: #182116 !important; color: #f0efdf; }
+html.dark nav { background: rgba(24, 33, 22, .94) !important; border-color: rgba(208, 217, 184, .16) !important; color: #f0efdf; }
+html.dark nav a, html.dark nav strong, html.dark nav small { color: #f0efdf; }
+html.dark main [class*="bg-white"], html.dark main [class*="bg-[#fffdf7]"] { background: #24331f !important; border-color: rgba(208, 217, 184, .15); }
+html.dark main section p { color: #d0d9c1; }
+html.dark main section h1, html.dark main section h2, html.dark main section h3, html.dark main section h4 { color: #f0efdf; }
+html.dark input, html.dark textarea, html.dark select { color: #f0efdf; background: #24331f; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .motion-reveal { opacity: 1; transform: none; }
+  .motion-lift, .motion-image { transition: none; animation: none !important; }
+}
