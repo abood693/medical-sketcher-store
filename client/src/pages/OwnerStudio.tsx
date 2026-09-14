@@ -45,7 +45,7 @@ const statusLabel: Record<ShelfStatus, string> = {
 };
 
 export default function OwnerStudio() {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, error: authError, isAuthenticated, refresh } = useAuth();
   const [panel, setPanel] = useState<Panel>("overview");
   const [level, setLevel] = useState<Level>("A1/A2");
   const [prompt, setPrompt] = useState("");
@@ -148,13 +148,19 @@ export default function OwnerStudio() {
               const response = await fetch("/api/local-admin/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ username, password }),
               });
               if (!response.ok) {
                 const data = await response.json().catch(() => ({}));
                 throw new Error(data.error || "Sign in failed");
               }
-              window.location.reload();
+              const session = await refresh();
+              if (!session.data) {
+                throw new Error(
+                  "Login succeeded, but the owner session was not detected. Check JWT_SECRET and cookie settings in Render."
+                );
+              }
             } catch (error) {
               setLoginError(
                 error instanceof Error ? error.message : "Sign in failed"
@@ -187,9 +193,14 @@ export default function OwnerStudio() {
               autoComplete="current-password"
             />
           </div>
-          {loginError && (
-            <p className="mt-3 text-sm text-[#8d4133]">{loginError}</p>
-          )}
+            {loginError && (
+              <p className="mt-3 text-sm text-[#8d4133]">{loginError}</p>
+            )}
+            {!loginError && authError && (
+              <p className="mt-3 text-sm text-[#8d4133]">
+                Session check: {authError.message}
+              </p>
+            )}
           <Button
             type="submit"
             disabled={loggingIn}
@@ -207,7 +218,9 @@ export default function OwnerStudio() {
           <ShieldCheck className="mx-auto mb-5 size-12 text-[#8d4133]" />
           <h1 className="font-display text-3xl font-bold">Owner access only</h1>
           <p className="mt-3 text-sm text-[#607487]">
-            This account does not have administrator permission.
+            {authError instanceof Error
+              ? authError.message
+              : "This account does not have administrator permission."}
           </p>
           <Link href="/">
             <Button variant="outline" className="mt-6 rounded-full">
