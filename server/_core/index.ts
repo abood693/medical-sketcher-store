@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { registerLocalAdminRoute } from "./localAdmin";
+import { registerDigitalProductUploadRoute } from "./digitalProductUpload";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -32,14 +33,14 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
-  // Configure body parser with larger size limit for file uploads
-  // PDF uploads are sent as base64 JSON from the owner studio. Keep this
-  // comfortably above the 82MB workbook size while still bounded.
+  // JSON is still used by the app API. PDFs use the binary endpoint below,
+  // avoiding Base64 overhead and proxy/body-size failures.
   app.use(express.json({ limit: "140mb" }));
   app.use(express.urlencoded({ limit: "140mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
   registerLocalAdminRoute(app);
+  registerDigitalProductUploadRoute(app);
   // tRPC API
   app.use(
     "/api/trpc",

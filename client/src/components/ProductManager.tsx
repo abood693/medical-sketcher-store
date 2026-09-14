@@ -20,16 +20,10 @@ export default function ProductManager() {
   const [pdfKey, setPdfKey] = useState("");
   const [fileName, setFileName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const products = trpc.digitalProducts.adminList.useQuery();
   const utils = trpc.useUtils();
-  const upload = trpc.digitalProducts.adminUploadPdf.useMutation({
-    onSuccess: data => {
-      setPdfKey(data.key);
-      toast.success("PDF uploaded securely");
-    },
-    onError: error => toast.error(`Upload failed: ${error.message}`),
-  });
   const reset = () => {
     setTitle("");
     setDescription("");
@@ -55,18 +49,45 @@ export default function ProductManager() {
     },
     onError: e => toast.error(e.message),
   });
-  const onFile = (file?: File) => {
+  const onFile = async (file?: File) => {
     if (!file) return;
-    if (file.type !== "application/pdf")
+    const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+    if (!isPdf)
       return toast.error("Please choose a PDF file");
     if (file.size > 100 * 1024 * 1024)
       return toast.error("PDF must be smaller than 100 MB");
     setFileName(file.name);
-    const reader = new FileReader();
-    reader.onload = () =>
-      upload.mutate({ fileName: file.name, base64: String(reader.result) });
-    reader.onerror = () => toast.error("Could not read this file");
-    reader.readAsDataURL(file);
+    setPdfKey("");
+    setUploading(true);
+    try {
+      const raw = sessionStorage.getItem("manus-cookie");
+      const token = raw?.startsWith("app_session_id=")
+        ? raw.slice("app_session_id=".length)
+        : "";
+      const response = await fetch("/api/admin/digital-products/upload-pdf", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/pdf",
+          "X-File-Name": file.name,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: file,
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        key?: string;
+        error?: string;
+      };
+      if (!response.ok || !data.key) {
+        throw new Error(data.error || `Upload failed (${response.status})`);
+      }
+      setPdfKey(data.key);
+      toast.success("PDF uploaded securely");
+    } catch (error) {
+      toast.error(`Upload failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } finally {
+      setUploading(false);
+    }
   };
   const edit = (item: any) => {
     setEditingId(item.id);
@@ -151,7 +172,7 @@ export default function ProductManager() {
             className="group flex min-h-28 items-center gap-4 rounded-2xl border-2 border-dashed border-[#9ed1db] bg-[#f4fbfc] px-5 text-start transition hover:border-[#16849a] hover:bg-[#edf9fb]"
           >
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white text-[#16849a] shadow-sm">
-              {upload.isPending ? (
+              {uploading ? (
                 <Loader2 className="size-5 animate-spin" />
               ) : (
                 <UploadCloud className="size-5" />
@@ -159,7 +180,7 @@ export default function ProductManager() {
             </span>
             <span>
               <strong className="block text-sm text-[#10283f]">
-                {upload.isPending
+                {uploading
                   ? "Uploading securely…"
                   : fileName || "Choose a PDF workbook"}
               </strong>
@@ -172,7 +193,7 @@ export default function ProductManager() {
             ref={fileRef}
             hidden
             type="file"
-            accept="application/pdf"
+            accept="application/pdf,.pdf"
             onChange={e => onFile(e.target.files?.[0])}
           />
           <div className="flex items-center rounded-2xl bg-slate-50 px-4 text-sm text-slate-600">
@@ -183,7 +204,7 @@ export default function ProductManager() {
         <div className="mt-5 flex flex-wrap gap-3">
           <Button
             onClick={save}
-            disabled={upload.isPending || saving}
+            disabled={uploading || saving}
             className="rounded-full bg-[#10283f] px-6 hover:bg-[#174769]"
           >
             {saving ? (
