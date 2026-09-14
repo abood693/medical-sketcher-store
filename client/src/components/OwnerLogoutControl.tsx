@@ -1,13 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/_core/hooks/useAuth";
 import { LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function OwnerLogoutControl() {
-  const { logout } = useAuth();
   const [, navigate] = useLocation();
   const handleLogout = async () => {
-    await logout();
+    await fetch("/api/local-admin/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    try {
+      sessionStorage.removeItem("manus-cookie");
+    } catch {}
     navigate("/", { replace: true });
   };
 

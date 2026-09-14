@@ -21,6 +21,29 @@ function verifyPassword(password: string, encoded: string) {
 }
 
 export function registerLocalAdminRoute(app: Express) {
+  const clearOwnerCookie = (req: Request, res: Response) => {
+    res.clearCookie(COOKIE_NAME, {
+      ...getSessionCookieOptions(req),
+      maxAge: -1,
+    });
+  };
+
+  app.get("/api/local-admin/session", async (req: Request, res: Response) => {
+    try {
+      const user = await sdk.authenticateRequest(req);
+      if (user.openId !== "local-admin" || user.role !== "admin") {
+        res.status(401).json({ authenticated: false });
+        return;
+      }
+      res.json({
+        authenticated: true,
+        user: { name: user.name, role: "admin" },
+      });
+    } catch {
+      res.status(401).json({ authenticated: false });
+    }
+  });
+
   app.post("/api/local-admin/login", async (req: Request, res: Response) => {
     const { username, password } = req.body ?? {};
     const missing = [
@@ -79,5 +102,10 @@ export function registerLocalAdminRoute(app: Express) {
         .status(503)
         .json({ error: "Owner session is not configured. Check JWT_SECRET" });
     }
+  });
+
+  app.post("/api/local-admin/logout", (req: Request, res: Response) => {
+    clearOwnerCookie(req, res);
+    res.json({ success: true });
   });
 }

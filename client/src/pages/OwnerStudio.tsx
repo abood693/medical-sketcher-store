@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import FeedbackModeration from "@/components/FeedbackModeration";
 import ProductManager from "@/components/ProductManager";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import {
   ArrowLeft,
@@ -44,8 +43,69 @@ const statusLabel: Record<ShelfStatus, string> = {
   hidden: "Hidden",
 };
 
+const OWNER_TOKEN_KEY = "manus-cookie";
+type OwnerSession = { name: string; role: "admin" };
+
+function ownerAuthHeaders(): HeadersInit {
+  try {
+    const raw = sessionStorage.getItem(OWNER_TOKEN_KEY);
+    const token = raw?.startsWith("app_session_id=")
+      ? raw.slice("app_session_id=".length)
+      : "";
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
+}
+
+function useOwnerSession() {
+  const [user, setUser] = useState<OwnerSession | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/local-admin/session", {
+        credentials: "include",
+        headers: ownerAuthHeaders(),
+      });
+      if (!response.ok) {
+        setUser(null);
+        setError(null);
+        return false;
+      }
+      const data = (await response.json()) as {
+        authenticated?: boolean;
+        user?: OwnerSession;
+      };
+      if (!data.authenticated || !data.user) {
+        setUser(null);
+        setError(null);
+        return false;
+      }
+      setUser(data.user);
+      setError(null);
+      return true;
+    } catch (cause) {
+      setUser(null);
+      setError(cause instanceof Error ? cause.message : "Session check failed");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void refresh();
+  }, []);
+
+  return { user, loading, error, isAuthenticated: Boolean(user), refresh };
+}
+
 export default function OwnerStudio() {
-  const { user, loading, error: authError, isAuthenticated, refresh } = useAuth();
+  const { user, loading, error: authError, isAuthenticated, refresh } =
+    useOwnerSession();
   const [panel, setPanel] = useState<Panel>("overview");
   const [level, setLevel] = useState<Level>("A1/A2");
   const [prompt, setPrompt] = useState("");
@@ -138,7 +198,9 @@ export default function OwnerStudio() {
     );
   if (!isAuthenticated)
     return (
-      <div className="grid min-h-screen place-items-center bg-[#f4f1e9] px-6">
+      <div className="relative grid min-h-screen place-items-center overflow-hidden bg-[#f4efe4] px-5 py-8 text-[#26351f] sm:px-8">
+        <div className="pointer-events-none absolute -left-28 -top-28 size-80 rounded-full bg-[#d0d9b8]/45 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -right-24 size-96 rounded-full bg-[#c7b895]/25 blur-3xl" />
         <form
           onSubmit={async event => {
             event.preventDefault();
@@ -165,8 +227,8 @@ export default function OwnerStudio() {
                   `app_session_id=${loginData.token}`
                 );
               }
-              const session = await refresh();
-              if (!session.data) {
+              const authenticated = await refresh();
+              if (!authenticated) {
                 throw new Error(
                   "Login succeeded, but the owner session was not detected. Check JWT_SECRET and cookie settings in Render."
                 );
@@ -179,45 +241,36 @@ export default function OwnerStudio() {
               setLoggingIn(false);
             }
           }}
-          className="max-w-md rounded-[2rem] bg-white p-10 text-center shadow-xl"
+          className="relative grid w-full max-w-4xl overflow-hidden rounded-[2.5rem] border border-[#394b2b]/10 bg-[#fffdf8] shadow-[0_30px_80px_rgba(57,75,43,.16)] md:grid-cols-[.9fr_1.1fr]"
         >
-          <ShieldCheck className="mx-auto mb-5 size-12 text-[#556b2f]" />
-          <h1 className="font-display text-3xl font-bold">Owner access</h1>
-          <p className="mt-3 text-sm text-[#607487]">
-            Sign in with the owner account to administer the platform.
-          </p>
-          <div className="mt-6 grid gap-3 text-left">
-            <Input
-              aria-label="Username"
-              value={username}
-              onChange={event => setUsername(event.target.value)}
-              placeholder="Username"
-              autoComplete="username"
-            />
-            <Input
-              aria-label="Password"
-              value={password}
-              onChange={event => setPassword(event.target.value)}
-              placeholder="Password"
-              type="password"
-              autoComplete="current-password"
-            />
+          <div className="relative hidden min-h-[31rem] overflow-hidden bg-[#394b2b] p-9 text-[#f4efe4] md:block">
+            <div className="absolute -right-16 -top-16 size-56 rounded-full border-[22px] border-[#d0d9b8]/20" />
+            <div className="absolute -bottom-16 -left-16 size-52 rounded-full bg-[#76864a]/40" />
+            <p className="relative text-[10px] font-bold tracking-[.2em] text-[#d0d9b8]">MEDICAL.SKETCHER</p>
+            <h2 className="relative mt-20 max-w-xs font-display text-5xl font-bold leading-[.95]">A quiet space to shape better learning.</h2>
+            <p className="relative mt-6 max-w-xs text-sm leading-7 text-[#e6e9d8]">Manage books, levels, assessments and the assistant from one calm control room.</p>
+            <img src="/medical-sketcher-communication-scene.jpg" alt="Medical sketcher owner studio" className="absolute bottom-0 right-0 w-64 opacity-90 mix-blend-screen" />
           </div>
+          <div className="p-8 text-center sm:p-12 md:text-left">
+            <ShieldCheck className="mx-auto mb-5 size-12 text-[#65763f] md:mx-0" />
+            <p className="text-[10px] font-bold tracking-[.2em] text-[#65763f]">OWNER STUDIO / PRIVATE ACCESS</p>
+            <h1 className="mt-3 font-display text-4xl font-bold">Welcome back.</h1>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-[#69715e]">Sign in with the owner account to administer the platform.</p>
+            <div className="mt-7 grid gap-3 text-left">
+              <label className="grid gap-2 text-xs font-bold text-[#394b2b]">Username<Input aria-label="Username" value={username} onChange={event => setUsername(event.target.value)} placeholder="Username" autoComplete="username" /></label>
+              <label className="grid gap-2 text-xs font-bold text-[#394b2b]">Password<Input aria-label="Password" value={password} onChange={event => setPassword(event.target.value)} placeholder="Password" type="password" autoComplete="current-password" /></label>
+            </div>
             {loginError && (
               <p className="mt-3 text-sm text-[#8d4133]">{loginError}</p>
             )}
             {!loginError && authError && (
               <p className="mt-3 text-sm text-[#8d4133]">
-                Session check: {authError.message}
+                Session check: {authError}
               </p>
             )}
-          <Button
-            type="submit"
-            disabled={loggingIn}
-            className="mt-6 rounded-full bg-[#10283f] px-7"
-          >
-            {loggingIn ? "Signing in…" : "Sign in"}
-          </Button>
+            <Button type="submit" disabled={loggingIn} className="mt-7 w-full rounded-full bg-[#394b2b] py-6 text-sm hover:bg-[#526b37]">{loggingIn ? "Checking secure session…" : "Enter owner studio"}</Button>
+            <p className="mt-5 text-center text-[11px] text-[#8a8e7b]">Your private session is protected and expires automatically.</p>
+          </div>
         </form>
       </div>
     );
@@ -228,9 +281,7 @@ export default function OwnerStudio() {
           <ShieldCheck className="mx-auto mb-5 size-12 text-[#8d4133]" />
           <h1 className="font-display text-3xl font-bold">Owner access only</h1>
           <p className="mt-3 text-sm text-[#607487]">
-            {authError instanceof Error
-              ? authError.message
-              : "This account does not have administrator permission."}
+            {authError ?? "This account does not have administrator permission."}
           </p>
           <Link href="/">
             <Button variant="outline" className="mt-6 rounded-full">
