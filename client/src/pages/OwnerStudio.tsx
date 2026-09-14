@@ -155,6 +155,16 @@ export default function OwnerStudio() {
                 const data = await response.json().catch(() => ({}));
                 throw new Error(data.error || "Sign in failed");
               }
+              const loginData = (await response.json()) as {
+                success?: boolean;
+                token?: string;
+              };
+              if (loginData.token) {
+                sessionStorage.setItem(
+                  "manus-cookie",
+                  `app_session_id=${loginData.token}`
+                );
+              }
               const session = await refresh();
               if (!session.data) {
                 throw new Error(

@@ -68,7 +68,11 @@ export function registerLocalAdminRoute(app: Express) {
         ...getSessionCookieOptions(req),
         maxAge: ONE_YEAR_MS,
       });
-      res.json({ success: true });
+      // The frontend already supports an Authorization-header fallback for
+      // browsers or reverse proxies that drop Set-Cookie. Keep the HttpOnly
+      // cookie as the primary session path and return this token only so that
+      // the owner dashboard can remain usable in that fallback case.
+      res.json({ success: true, token });
     } catch (error) {
       console.error("[LocalAdmin] Failed to create owner session:", error);
       res
