@@ -1,7 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/contexts/CartContext";
-import OwnerLogoutControl from "@/components/OwnerLogoutControl";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
 import LegalPage from "@/pages/LegalPage";
@@ -11,7 +10,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
 function OwnerRoute() {
-  return <><OwnerStudio /><OwnerLogoutControl /></>;
+  return <OwnerStudio />;
 }
 
 function App() {

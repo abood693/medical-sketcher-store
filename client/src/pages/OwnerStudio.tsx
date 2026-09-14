@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FeedbackModeration from "@/components/FeedbackModeration";
 import ProductManager from "@/components/ProductManager";
+import OwnerLogoutControl from "@/components/OwnerLogoutControl";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import {
@@ -63,6 +64,12 @@ function useOwnerSession() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const accept = (sessionUser: OwnerSession) => {
+    setUser(sessionUser);
+    setError(null);
+    setLoading(false);
+  };
+
   const refresh = async () => {
     setLoading(true);
     try {
@@ -100,11 +107,11 @@ function useOwnerSession() {
     void refresh();
   }, []);
 
-  return { user, loading, error, isAuthenticated: Boolean(user), refresh };
+  return { user, loading, error, isAuthenticated: Boolean(user), refresh, accept };
 }
 
 export default function OwnerStudio() {
-  const { user, loading, error: authError, isAuthenticated, refresh } =
+  const { user, loading, error: authError, isAuthenticated, accept } =
     useOwnerSession();
   const [panel, setPanel] = useState<Panel>("overview");
   const [level, setLevel] = useState<Level>("A1/A2");
@@ -226,12 +233,9 @@ export default function OwnerStudio() {
                   "manus-cookie",
                   `app_session_id=${loginData.token}`
                 );
-              }
-              const authenticated = await refresh();
-              if (!authenticated) {
-                throw new Error(
-                  "Login succeeded, but the owner session was not detected. Check JWT_SECRET and cookie settings in Render."
-                );
+                accept({ name: username.trim(), role: "admin" });
+              } else {
+                throw new Error("Owner login did not return a secure session token.");
               }
             } catch (error) {
               setLoginError(
@@ -333,6 +337,7 @@ export default function OwnerStudio() {
 
   return (
     <main className="min-h-screen bg-[#f4f1e9] text-[#1d281c]">
+      <OwnerLogoutControl />
       <header className="border-b border-[#10283f]/10 bg-[#ffffff]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
           <Link
