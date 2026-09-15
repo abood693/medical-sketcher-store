@@ -3,6 +3,7 @@
 // Downloads return /manus-storage/{key} paths served via 307 redirect.
 
 import crypto from "node:crypto";
+import { open } from "node:fs/promises";
 import { ENV } from "./_core/env";
 
 function hasSupabaseStorage() {
@@ -147,6 +148,75 @@ export async function storagePutStream(
   } as RequestInit);
   if (!uploadResp.ok) throw new Error(`Storage upload to S3 failed (${uploadResp.status})`);
   return { key, url: `/manus-storage/${key}` };
+}
+
+export async function storagePutResumable(
+  relKey: string,
+  filePath: string,
+  size: number,
+  contentType = "application/octet-stream"
+): Promise<{ key: string; url: string }> {
+  const key = appendHashSuffix(normalizeKey(relKey));
+  if (!hasSupabaseStorage()) {
+    const stream = (await import("node:fs")).createReadStream(filePath);
+    return storagePutStream(relKey, stream, contentType);
+  }
+  const base = new URL(ENV.supabaseUrl);
+  const hostname = base.hostname.endsWith(".supabase.co")
+    ? base.hostname.replace(/\.supabase\.co$/, ".storage.supabase.co")
+    : base.hostname;
+  const endpoint = `https://${hostname}/storage/v1/upload/resumable`;
+  const metadata = [
+    `bucketName ${Buffer.from(ENV.supabaseBucket).toString("base64")}`,
+    `objectName ${Buffer.from(key).toString("base64")}`,
+    `contentType ${Buffer.from(contentType).toString("base64")}`,
+  ].join(",");
+  const createResponse = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${ENV.supabaseServiceRoleKey}`,
+      "Tus-Resumable": "1.0.0",
+      "Upload-Length": String(size),
+      "Upload-Metadata": metadata,
+      "x-upsert": "false",
+    },
+  });
+  if (!createResponse.ok) {
+    const msg = await createResponse.text().catch(() => createResponse.statusText);
+    throw new Error(`Supabase resumable upload failed (${createResponse.status}): ${msg}`);
+  }
+  const location = createResponse.headers.get("location");
+  if (!location) throw new Error("Supabase returned no resumable upload URL");
+  const uploadUrl = new URL(location, endpoint).toString();
+  const handle = await open(filePath, "r");
+  const chunkSize = 6 * 1024 * 1024;
+  const buffer = Buffer.alloc(chunkSize);
+  let offset = 0;
+  try {
+    while (offset < size) {
+      const wanted = Math.min(chunkSize, size - offset);
+      const read = await handle.read(buffer, 0, wanted, offset);
+      if (read.bytesRead !== wanted) throw new Error("Temporary upload file changed during upload");
+      const patchResponse = await fetch(uploadUrl, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${ENV.supabaseServiceRoleKey}`,
+          "Tus-Resumable": "1.0.0",
+          "Upload-Offset": String(offset),
+          "Content-Type": "application/offset+octet-stream",
+        },
+        body: buffer.subarray(0, wanted),
+      });
+      if (!patchResponse.ok) {
+        const msg = await patchResponse.text().catch(() => patchResponse.statusText);
+        throw new Error(`Supabase resumable chunk failed (${patchResponse.status}): ${msg}`);
+      }
+      offset += wanted;
+    }
+  } finally {
+    await handle.close();
+  }
+  return { key, url: `/supabase-storage/${key}` };
 }
 
 export async function storageGet(

@@ -1,9 +1,9 @@
 import crypto from "node:crypto";
-import { createReadStream, promises as fs } from "node:fs";
+import { promises as fs } from "node:fs";
 import path from "node:path";
 import express, { type Express, type Request, type Response } from "express";
 import { sdk } from "./sdk";
-import { storagePutStream } from "../storage";
+import { storagePutResumable } from "../storage";
 
 const MAX_UPLOAD_BYTES = 2 * 1024 * 1024 * 1024;
 const CHUNK_LIMIT = 16 * 1024 * 1024;
@@ -115,9 +115,10 @@ export function registerDigitalProductUploadRoute(app: Express) {
         res.status(400).json({ error: "The uploaded file is not a valid PDF or ZIP" });
         return;
       }
-      const result = await storagePutStream(
+      const result = await storagePutResumable(
         `products/${crypto.randomUUID()}-${upload.fileName}`,
-        createReadStream(upload.filePath),
+        upload.filePath,
+        upload.total,
         upload.contentType
       );
       res.json(result);
