@@ -217,18 +217,17 @@ class SDKServer {
       });
       const { openId, appId, name } = payload as Record<string, unknown>;
 
-      if (
-        !isNonEmptyString(openId) ||
-        !isNonEmptyString(appId) ||
-        !isNonEmptyString(name)
-      ) {
+      // Local Owner sessions are intentionally independent from OAuth and may
+      // be issued on deployments that do not configure VITE_APP_ID.
+      const validAppId = openId === "local-admin" || isNonEmptyString(appId);
+      if (!isNonEmptyString(openId) || !validAppId || !isNonEmptyString(name)) {
         console.warn("[Auth] Session payload missing required fields");
         return null;
       }
 
       return {
         openId,
-        appId,
+        appId: typeof appId === "string" ? appId : "",
         name,
       };
     } catch (error) {
