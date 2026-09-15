@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import type { Express, Request, Response } from "express";
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { ONE_YEAR_MS, OWNER_COOKIE_NAME } from "@shared/const";
 import * as db from "../db";
 import { ENV } from "./env";
 import { getSessionCookieOptions } from "./cookies";
@@ -22,7 +22,7 @@ function verifyPassword(password: string, encoded: string) {
 
 export function registerLocalAdminRoute(app: Express) {
   const clearOwnerCookie = (req: Request, res: Response) => {
-    res.clearCookie(COOKIE_NAME, {
+    res.clearCookie(OWNER_COOKIE_NAME, {
       ...getSessionCookieOptions(req),
       maxAge: -1,
     });
@@ -87,7 +87,7 @@ export function registerLocalAdminRoute(app: Express) {
         name: username.trim(),
         expiresInMs: ONE_YEAR_MS,
       });
-      res.cookie(COOKIE_NAME, token, {
+      res.cookie(OWNER_COOKIE_NAME, token, {
         ...getSessionCookieOptions(req),
         maxAge: ONE_YEAR_MS,
       });

@@ -1,4 +1,10 @@
-import { AXIOS_TIMEOUT_MS, COOKIE_NAME, ONE_YEAR_MS, decodeOAuthState } from "@shared/const";
+import {
+  AXIOS_TIMEOUT_MS,
+  COOKIE_NAME,
+  ONE_YEAR_MS,
+  OWNER_COOKIE_NAME,
+  decodeOAuthState,
+} from "@shared/const";
 import { ForbiddenError } from "@shared/_core/errors";
 import axios, { type AxiosInstance } from "axios";
 import { parse as parseCookieHeader } from "cookie";
@@ -258,8 +264,9 @@ class SDKServer {
   async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
     // 1. Prefer the session cookie (regular OAuth login).
     const cookies = this.parseCookies(req.headers.cookie);
-    const cookieToken = cookies.get(COOKIE_NAME);
-    let sessionToken = cookieToken;
+    const ownerCookieToken = cookies.get(OWNER_COOKIE_NAME);
+    const appCookieToken = cookies.get(COOKIE_NAME);
+    let sessionToken = ownerCookieToken;
 
     // 2. Fallback to the Authorization header (Preview auto-login via
     //    sessionStorage), used when the browser blocks iframe cookies such as
@@ -269,15 +276,20 @@ class SDKServer {
       typeof authHeader === "string" && authHeader.startsWith("Bearer ")
         ? authHeader.slice(7)
         : undefined;
-    if (!sessionToken) sessionToken = bearerToken;
+    if (!sessionToken) sessionToken = bearerToken ?? appCookieToken;
 
     // A stale cookie can survive a deployment or secret rotation. If it is
     // invalid, retry with the explicit Authorization fallback instead of
     // rejecting a valid owner session sent by the client.
     let session = await this.verifySession(sessionToken);
-    if (!session && bearerToken && bearerToken !== sessionToken) {
-      sessionToken = bearerToken;
-      session = await this.verifySession(sessionToken);
+    if (!session) {
+      for (const candidate of [bearerToken, appCookieToken]) {
+        if (candidate && candidate !== sessionToken) {
+          sessionToken = candidate;
+          session = await this.verifySession(sessionToken);
+          if (session) break;
+        }
+      }
     }
 
     if (!session) {
