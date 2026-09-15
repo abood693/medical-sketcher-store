@@ -908,6 +908,12 @@ export default function Home() {
             >
               {t.owner}
             </Link>
+            <Link
+              href="/downloads"
+              className="rounded-full border border-[#10283f]/15 px-4 py-2 transition hover:border-[#10283f]/40"
+            >
+              My downloads
+            </Link>
           </div>
           <div className="flex items-center gap-2">
             <button

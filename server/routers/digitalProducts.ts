@@ -13,6 +13,7 @@ import {
   getDigitalProduct,
   getOwnedProduct,
   listAllProducts,
+  listOwnedProducts,
   listPublishedProducts,
   removeDigitalProduct,
   updateDigitalProduct,
@@ -35,6 +36,16 @@ export const digitalProductsRouter = router({
     };
   }),
   adminList: adminProcedure.query(() => listAllProducts()),
+  myLibrary: protectedProcedure.query(async ({ ctx }) =>
+    Promise.all(
+      (await listOwnedProducts(ctx.user.id)).map(async item => ({
+        title: item.product.title,
+        productId: item.product.id,
+        purchasedAt: item.license.createdAt,
+        downloadUrl: await storageGetSignedUrl(item.product.pdfKey),
+      }))
+    )
+  ),
   adminCreate: adminProcedure
     .input(
       z.object({

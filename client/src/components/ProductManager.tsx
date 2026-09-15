@@ -44,7 +44,11 @@ async function uploadBook(file: File, onProgress: (value: number) => void) {
   const start = await fetch("/api/admin/digital-products/upload-pdf/start", {
     method: "POST",
     credentials: "include",
-    headers: { "X-Upload-Size": String(file.size), ...authHeaders },
+    headers: {
+      "X-Upload-Size": String(file.size),
+      "X-File-Name": file.name,
+      ...authHeaders,
+    },
   });
   const startData = (await start.json().catch(() => ({}))) as {
     uploadId?: string;
@@ -111,8 +115,10 @@ export default function ProductManager() {
 
   const addFiles = (files: FileList | File[]) => {
     const additions = Array.from(files).filter(file => {
-      if (file.type !== "application/pdf" && !/\.pdf$/i.test(file.name)) {
-        toast.error(`${file.name}: PDF files only`);
+      const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+      const isZip = file.type === "application/zip" || file.type === "application/x-zip-compressed" || /\.zip$/i.test(file.name);
+      if (!isPdf && !isZip) {
+        toast.error(`${file.name}: PDF or ZIP files only`);
         return false;
       }
       if (file.size > MAX_BOOK_BYTES) {
@@ -228,9 +234,9 @@ export default function ProductManager() {
         >
           <span className="grid size-12 place-items-center rounded-2xl bg-white text-[#16849a] shadow-sm"><UploadCloud className="size-5" /></span>
           <strong className="mt-3 text-sm text-[#10283f]">Drop multiple PDF books here or browse files</strong>
-          <small className="mt-1 text-xs text-slate-500">PDF only · up to 2 GB per book · chunked and resumable-friendly</small>
+          <small className="mt-1 text-xs text-slate-500">PDF or ZIP · up to 2 GB per book · private cloud storage</small>
         </button>
-        <input ref={fileRef} hidden multiple type="file" accept="application/pdf,.pdf" onChange={event => { if (event.target.files) addFiles(event.target.files); event.currentTarget.value = ""; }} />
+        <input ref={fileRef} hidden multiple type="file" accept="application/pdf,.pdf,application/zip,.zip" onChange={event => { if (event.target.files) addFiles(event.target.files); event.currentTarget.value = ""; }} />
 
         {queue.length > 0 && (
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3">

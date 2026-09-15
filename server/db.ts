@@ -385,3 +385,14 @@ export async function getOwnedProduct(userId: number, productId: number) {
       .limit(1)
   )[0];
 }
+
+export async function listOwnedProducts(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({ product: digitalProducts, license: productLicenses })
+    .from(productLicenses)
+    .innerJoin(digitalProducts, eq(productLicenses.productId, digitalProducts.id))
+    .where(eq(productLicenses.userId, userId))
+    .orderBy(desc(productLicenses.createdAt));
+}

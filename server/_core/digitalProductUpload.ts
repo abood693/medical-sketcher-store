@@ -8,11 +8,17 @@ import { storagePutStream } from "../storage";
 const MAX_UPLOAD_BYTES = 2 * 1024 * 1024 * 1024;
 const CHUNK_LIMIT = 16 * 1024 * 1024;
 const UPLOAD_DIR = "/tmp/medical-sketcher-uploads";
-const uploads = new Map<string, { filePath: string; received: number; total: number }>();
+const uploads = new Map<string, {
+  filePath: string;
+  received: number;
+  total: number;
+  fileName: string;
+  contentType: string;
+}>();
 
 function safeFileName(value: string) {
   const normalized = value.trim().replace(/[^a-zA-Z0-9._-]/g, "_");
-  return normalized.toLowerCase().endsWith(".pdf") ? normalized : `${normalized}.pdf`;
+  return normalized;
 }
 
 async function requireAdmin(req: Request, res: Response) {
@@ -43,6 +49,13 @@ export function registerDigitalProductUploadRoute(app: Express) {
   app.post("/api/admin/digital-products/upload-pdf/start", async (req, res) => {
     if (!(await requireAdmin(req, res))) return;
     const total = Number(req.headers["x-upload-size"]);
+    const fileName = safeFileName(String(req.headers["x-file-name"] ?? "book.pdf"));
+    const isZip = fileName.toLowerCase().endsWith(".zip");
+    const isPdf = fileName.toLowerCase().endsWith(".pdf");
+    if (!isZip && !isPdf) {
+      res.status(400).json({ error: "Only PDF or ZIP books are allowed" });
+      return;
+    }
     if (!Number.isSafeInteger(total) || total <= 0 || total > MAX_UPLOAD_BYTES) {
       res.status(413).json({ error: "PDF files must be smaller than 2 GB" });
       return;
@@ -51,7 +64,13 @@ export function registerDigitalProductUploadRoute(app: Express) {
     const id = crypto.randomUUID();
     const filePath = path.join(UPLOAD_DIR, id);
     await fs.writeFile(filePath, Buffer.alloc(0), { flag: "wx" });
-    uploads.set(id, { filePath, received: 0, total });
+    uploads.set(id, {
+      filePath,
+      received: 0,
+      total,
+      fileName,
+      contentType: isZip ? "application/zip" : "application/pdf",
+    });
     res.json({ uploadId: id, chunkSize: 8 * 1024 * 1024 });
   });
 
@@ -84,20 +103,22 @@ export function registerDigitalProductUploadRoute(app: Express) {
       res.status(409).json({ error: "Upload is incomplete" });
       return;
     }
-    const fileName = safeFileName(String(req.headers["x-file-name"] ?? "book.pdf"));
     try {
       const header = Buffer.alloc(4);
       const handle = await fs.open(upload.filePath, "r");
       await handle.read(header, 0, 4, 0);
       await handle.close();
-      if (header.toString() !== "%PDF") {
-        res.status(400).json({ error: "Only valid PDF files are allowed" });
+      const isPdf = header.toString() === "%PDF";
+      const isZip = header[0] === 0x50 && header[1] === 0x4b;
+      if ((!upload.fileName.toLowerCase().endsWith(".pdf") || !isPdf) &&
+          (!upload.fileName.toLowerCase().endsWith(".zip") || !isZip)) {
+        res.status(400).json({ error: "The uploaded file is not a valid PDF or ZIP" });
         return;
       }
       const result = await storagePutStream(
-        `products/${crypto.randomUUID()}-${fileName}`,
+        `products/${crypto.randomUUID()}-${upload.fileName}`,
         createReadStream(upload.filePath),
-        "application/pdf"
+        upload.contentType
       );
       res.json(result);
     } catch (error) {
