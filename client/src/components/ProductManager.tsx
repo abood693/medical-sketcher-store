@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
-import { FileUp, Loader2, Plus, Trash2, UploadCloud, X } from "lucide-react";
+import { FileUp, Loader2, Plus, Trash2, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
 type UploadStatus = "queued" | "uploading" | "ready" | "publishing" | "published" | "error";
@@ -51,6 +51,9 @@ async function uploadBook(file: File, onProgress: (value: number) => void) {
     chunkSize?: number;
     error?: string;
   };
+  if (start.status === 401 || start.status === 403) {
+    throw new Error("Owner session expired. Log out and sign in again, then retry.");
+  }
   if (!start.ok || !startData.uploadId) {
     throw new Error(startData.error || `Could not start upload (${start.status})`);
   }
