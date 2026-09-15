@@ -61,9 +61,10 @@ export default function ProductManager() {
     setUploading(true);
     try {
       const raw = sessionStorage.getItem("manus-cookie");
-      const token = raw?.startsWith("app_session_id=")
-        ? raw.slice("app_session_id=".length)
-        : "";
+      const pair = raw
+        ?.split(";")
+        .find(item => item.trim().startsWith("app_session_id="));
+      const token = pair?.trim().slice("app_session_id=".length) ?? "";
       const authHeaders: Record<string, string> = token
         ? { Authorization: `Bearer ${token}` }
         : {};

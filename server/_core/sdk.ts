@@ -258,19 +258,27 @@ class SDKServer {
   async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
     // 1. Prefer the session cookie (regular OAuth login).
     const cookies = this.parseCookies(req.headers.cookie);
-    let sessionToken = cookies.get(COOKIE_NAME);
+    const cookieToken = cookies.get(COOKIE_NAME);
+    let sessionToken = cookieToken;
 
     // 2. Fallback to the Authorization header (Preview auto-login via
     //    sessionStorage), used when the browser blocks iframe cookies such as
     //    Safari ITP, private browsing, or iOS/Android WebView.
-    if (!sessionToken) {
-      const authHeader = req.headers.authorization;
-      if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
-        sessionToken = authHeader.slice(7);
-      }
-    }
+    const authHeader = req.headers.authorization;
+    const bearerToken =
+      typeof authHeader === "string" && authHeader.startsWith("Bearer ")
+        ? authHeader.slice(7)
+        : undefined;
+    if (!sessionToken) sessionToken = bearerToken;
 
-    const session = await this.verifySession(sessionToken);
+    // A stale cookie can survive a deployment or secret rotation. If it is
+    // invalid, retry with the explicit Authorization fallback instead of
+    // rejecting a valid owner session sent by the client.
+    let session = await this.verifySession(sessionToken);
+    if (!session && bearerToken && bearerToken !== sessionToken) {
+      sessionToken = bearerToken;
+      session = await this.verifySession(sessionToken);
+    }
 
     if (!session) {
       throw ForbiddenError("Invalid session cookie");

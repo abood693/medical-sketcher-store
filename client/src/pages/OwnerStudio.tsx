@@ -50,9 +50,10 @@ type OwnerSession = { name: string; role: "admin" };
 function ownerAuthHeaders(): HeadersInit {
   try {
     const raw = sessionStorage.getItem(OWNER_TOKEN_KEY);
-    const token = raw?.startsWith("app_session_id=")
-      ? raw.slice("app_session_id=".length)
-      : "";
+    const pair = raw
+      ?.split(";")
+      .find(item => item.trim().startsWith("app_session_id="));
+    const token = pair?.trim().slice("app_session_id=".length) ?? "";
     return token ? { Authorization: `Bearer ${token}` } : {};
   } catch {
     return {};
