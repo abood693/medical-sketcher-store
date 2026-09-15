@@ -286,6 +286,16 @@ export async function updateDigitalProduct(
     .where(eq(digitalProducts.id, id));
 }
 
+export async function removeDigitalProduct(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable");
+  // Keep the row for historical orders/licenses, but remove it from sale.
+  await db
+    .update(digitalProducts)
+    .set({ status: "hidden", updatedAt: new Date() })
+    .where(eq(digitalProducts.id, id));
+}
+
 export async function createDigitalOrder(input: {
   productId: number;
   userId: number;

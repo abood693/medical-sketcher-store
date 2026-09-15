@@ -101,6 +101,7 @@ export default function ProductManager() {
   const products = trpc.digitalProducts.adminList.useQuery();
   const utils = trpc.useUtils();
   const create = trpc.digitalProducts.adminCreate.useMutation();
+  const remove = trpc.digitalProducts.adminDelete.useMutation();
 
   const updateItem = (id: string, patch: Partial<BookUpload>) =>
     setQueue(items => items.map(item => (item.id === id ? { ...item, ...patch } : item)));
@@ -181,6 +182,17 @@ export default function ProductManager() {
         status: "ready",
         error: error instanceof Error ? error.message : "Could not publish book",
       });
+    }
+  };
+
+  const deletePublishedBook = async (id: number, title: string) => {
+    if (!window.confirm(`Remove “${title}” from the store?`)) return;
+    try {
+      await remove.mutateAsync({ id });
+      await utils.digitalProducts.adminList.invalidate();
+      toast.success("Book removed from the store");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not remove book");
     }
   };
 
@@ -266,10 +278,22 @@ export default function ProductManager() {
           <span className="rounded-full bg-[#eaf6f8] px-3 py-1 text-xs font-bold text-[#16849a]">{products.data?.length ?? 0} books</span>
         </div>
         <div className="space-y-3">
-          {products.data?.map(item => (
+          {products.data?.filter(item => item.status !== "hidden").map(item => (
             <div key={item.id} className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4 sm:flex-row sm:items-center">
               <div><strong className="text-[#10283f]">{item.title}</strong><p className="mt-1 text-xs text-slate-500">{(item.priceCents / 100).toFixed(2)} {item.currency} · {item.status} · PDF secured</p></div>
-              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Ready for sale</span>
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Ready for sale</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={remove.isPending}
+                  onClick={() => void deletePublishedBook(item.id, item.title)}
+                  className="rounded-full text-slate-400 hover:bg-red-50 hover:text-red-600"
+                  aria-label={`Remove ${item.title}`}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
             </div>
           ))}
           {!products.data?.length && <p className="rounded-2xl bg-slate-50 p-5 text-sm text-slate-500">No books published yet. Add your first books above.</p>}

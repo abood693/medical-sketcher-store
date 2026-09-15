@@ -14,6 +14,7 @@ import {
   getOwnedProduct,
   listAllProducts,
   listPublishedProducts,
+  removeDigitalProduct,
   updateDigitalProduct,
 } from "../db";
 import { storageGetSignedUrl, storagePut } from "../storage";
@@ -75,6 +76,9 @@ export const digitalProductsRouter = router({
         status: input.status,
       })
     ),
+  adminDelete: adminProcedure
+    .input(z.object({ id: z.number().int().positive() }))
+    .mutation(({ input }) => removeDigitalProduct(input.id)),
   adminUploadPdf: adminProcedure
     .input(
       z.object({
