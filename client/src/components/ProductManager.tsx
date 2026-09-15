@@ -54,8 +54,8 @@ export default function ProductManager() {
     const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
     if (!isPdf)
       return toast.error("Please choose a PDF file");
-    if (file.size > 500 * 1024 * 1024)
-      return toast.error("PDF must be smaller than 500 MB");
+    if (file.size > 2 * 1024 * 1024 * 1024)
+      return toast.error("PDF must be smaller than 2 GB");
     setFileName(file.name);
     setPdfKey("");
     setUploading(true);
@@ -64,22 +64,56 @@ export default function ProductManager() {
       const token = raw?.startsWith("app_session_id=")
         ? raw.slice("app_session_id=".length)
         : "";
-      const response = await fetch("/api/admin/digital-products/upload-pdf", {
+      const authHeaders: Record<string, string> = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+      const start = await fetch("/api/admin/digital-products/upload-pdf/start", {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/pdf",
-          "X-File-Name": file.name,
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: file,
+        headers: { "X-Upload-Size": String(file.size), ...authHeaders },
       });
-      const data = (await response.json().catch(() => ({}))) as {
+      const startData = (await start.json().catch(() => ({}))) as {
+        uploadId?: string;
+        chunkSize?: number;
+        error?: string;
+      };
+      if (!start.ok || !startData.uploadId) {
+        throw new Error(startData.error || `Upload failed (${start.status})`);
+      }
+      const chunkSize = startData.chunkSize || 8 * 1024 * 1024;
+      for (let offset = 0; offset < file.size; offset += chunkSize) {
+        const chunk = file.slice(offset, Math.min(offset + chunkSize, file.size));
+        const end = offset + chunk.size - 1;
+        const response = await fetch(
+          `/api/admin/digital-products/upload-pdf/${startData.uploadId}`,
+          {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/octet-stream",
+              "Content-Range": `bytes ${offset}-${end}/${file.size}`,
+              ...authHeaders,
+            },
+            body: chunk,
+          }
+        );
+        const data = (await response.json().catch(() => ({}))) as { error?: string };
+        if (!response.ok) throw new Error(data.error || `Upload failed (${response.status})`);
+      }
+      const complete = await fetch(
+        `/api/admin/digital-products/upload-pdf/${startData.uploadId}/complete`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "X-File-Name": file.name, ...authHeaders },
+        }
+      );
+      const data = (await complete.json().catch(() => ({}))) as {
         key?: string;
         error?: string;
       };
-      if (!response.ok || !data.key) {
-        throw new Error(data.error || `Upload failed (${response.status})`);
+      if (!complete.ok || !data.key) {
+        throw new Error(data.error || `Upload failed (${complete.status})`);
       }
       setPdfKey(data.key);
       toast.success("PDF uploaded securely");
@@ -185,7 +219,7 @@ export default function ProductManager() {
                   : fileName || "Choose a PDF workbook"}
               </strong>
               <small className="mt-1 block text-xs text-slate-500">
-                PDF only · maximum 500 MB
+                PDF only · maximum 2 GB (chunked upload)
               </small>
             </span>
           </button>

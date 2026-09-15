@@ -103,6 +103,52 @@ export async function storagePut(
   return { key, url: `/manus-storage/${key}` };
 }
 
+export async function storagePutStream(
+  relKey: string,
+  data: NodeJS.ReadableStream,
+  contentType = "application/octet-stream"
+): Promise<{ key: string; url: string }> {
+  const key = appendHashSuffix(normalizeKey(relKey));
+  if (hasSupabaseStorage()) {
+    const response = await fetch(supabaseObjectUrl(key), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ENV.supabaseServiceRoleKey}`,
+        apikey: ENV.supabaseServiceRoleKey,
+        "Content-Type": contentType,
+        "x-upsert": "false",
+      },
+      body: data as any,
+      duplex: "half",
+    } as RequestInit);
+    if (!response.ok) {
+      const msg = await response.text().catch(() => response.statusText);
+      throw new Error(`Supabase storage upload failed (${response.status}): ${msg}`);
+    }
+    return { key, url: `/supabase-storage/${key}` };
+  }
+  const { forgeUrl, forgeKey } = getForgeConfig();
+  const presignUrl = new URL("v1/storage/presign/put", forgeUrl + "/");
+  presignUrl.searchParams.set("path", key);
+  const presignResp = await fetch(presignUrl, {
+    headers: { Authorization: `Bearer ${forgeKey}` },
+  });
+  if (!presignResp.ok) {
+    const msg = await presignResp.text().catch(() => presignResp.statusText);
+    throw new Error(`Storage presign failed (${presignResp.status}): ${msg}`);
+  }
+  const { url: s3Url } = (await presignResp.json()) as { url: string };
+  if (!s3Url) throw new Error("Forge returned empty presign URL");
+  const uploadResp = await fetch(s3Url, {
+    method: "PUT",
+    headers: { "Content-Type": contentType },
+    body: data as any,
+    duplex: "half",
+  } as RequestInit);
+  if (!uploadResp.ok) throw new Error(`Storage upload to S3 failed (${uploadResp.status})`);
+  return { key, url: `/manus-storage/${key}` };
+}
+
 export async function storageGet(
   relKey: string
 ): Promise<{ key: string; url: string }> {
