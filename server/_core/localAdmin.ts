@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import type { Express, Request, Response } from "express";
+import { parse as parseCookieHeader } from "cookie";
 import { ONE_YEAR_MS, OWNER_COOKIE_NAME } from "@shared/const";
 import * as db from "../db";
 import { ENV } from "./env";
@@ -34,6 +35,17 @@ export function registerLocalAdminRoute(app: Express) {
       if (user.openId !== "local-admin" || user.role !== "admin") {
         res.status(401).json({ authenticated: false });
         return;
+      }
+      const bearer = req.headers.authorization?.startsWith("Bearer ")
+        ? req.headers.authorization.slice(7)
+        : undefined;
+      const cookies = parseCookieHeader(req.headers.cookie ?? "");
+      const validToken = bearer ?? cookies[OWNER_COOKIE_NAME];
+      if (validToken) {
+        res.cookie(OWNER_COOKIE_NAME, validToken, {
+          ...getSessionCookieOptions(req),
+          maxAge: ONE_YEAR_MS,
+        });
       }
       res.json({
         authenticated: true,
