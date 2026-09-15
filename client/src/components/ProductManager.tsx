@@ -54,8 +54,8 @@ export default function ProductManager() {
     const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
     if (!isPdf)
       return toast.error("Please choose a PDF file");
-    if (file.size > 100 * 1024 * 1024)
-      return toast.error("PDF must be smaller than 100 MB");
+    if (file.size > 500 * 1024 * 1024)
+      return toast.error("PDF must be smaller than 500 MB");
     setFileName(file.name);
     setPdfKey("");
     setUploading(true);
@@ -185,7 +185,7 @@ export default function ProductManager() {
                   : fileName || "Choose a PDF workbook"}
               </strong>
               <small className="mt-1 block text-xs text-slate-500">
-                PDF only · maximum 100 MB
+                PDF only · maximum 500 MB
               </small>
             </span>
           </button>

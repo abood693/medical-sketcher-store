@@ -2,7 +2,7 @@ import express, { type Express, type Request, type Response } from "express";
 import { sdk } from "./sdk";
 import { storagePut } from "../storage";
 
-const MAX_PDF_BYTES = 100 * 1024 * 1024;
+const MAX_PDF_BYTES = 500 * 1024 * 1024;
 
 function safeFileName(value: string) {
   const normalized = value.trim().replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -19,7 +19,7 @@ export function registerDigitalProductUploadRoute(app: Express) {
     "/api/admin/digital-products/upload-pdf",
     express.raw({
       type: ["application/pdf", "application/octet-stream"],
-      limit: "100mb",
+      limit: "500mb",
     }),
     async (req: Request, res: Response) => {
       try {
@@ -35,7 +35,7 @@ export function registerDigitalProductUploadRoute(app: Express) {
           return;
         }
         if (data.length > MAX_PDF_BYTES) {
-          res.status(413).json({ error: "PDF files must be smaller than 100 MB" });
+          res.status(413).json({ error: "PDF files must be smaller than 500 MB" });
           return;
         }
         if (data.subarray(0, 4).toString() !== "%PDF") {

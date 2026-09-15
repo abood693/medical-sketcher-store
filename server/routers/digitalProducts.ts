@@ -79,8 +79,8 @@ export const digitalProductsRouter = router({
     .input(
       z.object({
         fileName: z.string().min(1).max(120),
-        // Base64 expands binary files by roughly 33%; allow PDFs up to 100MB.
-        base64: z.string().min(1).max(140000000),
+        // Kept for backwards compatibility; the UI uses the binary endpoint.
+        base64: z.string().min(1).max(700000000),
       })
     )
     .mutation(async ({ input }) => {
@@ -88,8 +88,8 @@ export const digitalProductsRouter = router({
         input.base64.replace(/^data:application\/pdf;base64,/, ""),
         "base64"
       );
-      if (data.length > 100 * 1024 * 1024)
-        throw new Error("PDF files must be smaller than 100 MB");
+      if (data.length > 500 * 1024 * 1024)
+        throw new Error("PDF files must be smaller than 500 MB");
       if (data.subarray(0, 4).toString() !== "%PDF")
         throw new Error("Only valid PDF files are allowed");
       return storagePut(
